@@ -76,7 +76,7 @@
         #mgmtTable td:nth-child(5), #mgmtTable td:nth-child(6) { white-space: normal; min-width: 180px; }
         .mgmt-main-container { padding: 25px 5%; margin-top: 90px; }
 
-        /* 4. PANEL REKOD MURID (BESAR) */
+        /* 4. PANEL REKOD MURID (SIZE BESAR) */
         .student-main-container { padding: 25px 2.5%; margin-top: 90px; } 
         .cute-table { width: 100%; border-collapse: collapse; box-shadow: var(--shadow); border-radius: 12px; overflow: hidden; }
         .cute-table th { background: var(--gov-blue); color: var(--gov-gold); border-bottom: 4px solid var(--gov-gold); font-weight: bold; text-align: center; padding: 18px 15px; font-size: 14px;}
@@ -143,8 +143,6 @@
         </div>
         <div class="card">
             <div class="card-title">REKOD TERKINI</div>
-            
-            <!-- UPDATE: REMOVED BUTTON SEMUA -->
             <div class="filter-bar">
                 <button class="filter-btn active" id="fBulan" onclick="setFilter('bulan')">Bulan Ini (Default)</button>
                 <select id="fKelas" class="form-control" style="width:auto; margin-bottom:0; padding: 7px 10px; font-size:12px;" onchange="setFilter('kelas')">
@@ -154,7 +152,6 @@
                     <option value="semua">-- Guru Melapor --</option>
                 </select>
             </div>
-
             <div class="table-container">
                 <table id="recordTable">
                     <thead>
@@ -206,10 +203,10 @@
         <div class="card">
             <div class="card-title">TAPISAN DATA & JANA LAPORAN</div>
             <div class="filter-bar" style="background: white; border: none; padding: 0;">
-                <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:10px; font-weight:bold; color:var(--gov-blue);">MULA</label><input type="date" id="mS" class="form-control" style="width:auto; margin-bottom:0;"></div>
-                <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:10px; font-weight:bold; color:var(--gov-blue);">TAMAT</label><input type="date" id="mE" class="form-control" style="width:auto; margin-bottom:0;"></div>
-                <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:10px; font-weight:bold; color:var(--gov-blue);">KELAS</label><select id="mFilterK" class="form-control" style="width:auto; margin-bottom:0;"><option value="semua">Semua</option></select></div>
-                <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:10px; font-weight:bold; color:var(--gov-blue);">KATEGORI</label><select id="mFilterC" class="form-control" style="width:auto; margin-bottom:0;"><option value="semua">Semua</option></select></div>
+                <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:10px; font-weight:bold;">MULA</label><input type="date" id="mS" class="form-control" style="width:auto; margin-bottom:0;"></div>
+                <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:10px; font-weight:bold;">TAMAT</label><input type="date" id="mE" class="form-control" style="width:auto; margin-bottom:0;"></div>
+                <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:10px; font-weight:bold;">KELAS</label><select id="mFilterK" class="form-control" style="width:auto; margin-bottom:0;"><option value="semua">Semua</option></select></div>
+                <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:10px; font-weight:bold;">KATEGORI</label><select id="mFilterC" class="form-control" style="width:auto; margin-bottom:0;"><option value="semua">Semua</option></select></div>
                 <div style="display:flex; gap:10px; align-items:flex-end; margin-left:auto;">
                     <button class="btn-header" style="background:var(--gov-blue); height:37px;" onclick="applyMgmtFilter()">TAPIS</button>
                     <button class="btn-header" style="background:#27ae60; height:37px;" onclick="genMgmtPDF()">JANA PDF</button>
@@ -244,7 +241,7 @@
 
 <!-- MODALS -->
 <div id="modalIntv" class="modal-overlay"><div class="modal-content"><h3 style="color:var(--gov-blue);">Log Intervensi Murid</h3><input type="hidden" id="intvId"><label style="font-size:12px; font-weight:bold;">Tarikh Sesi:</label><input type="date" id="iT" class="form-control"><label style="font-size:12px; font-weight:bold;">Jenis Intervensi:</label><select id="iJ" class="form-control"><option value="Kaunseling">Kaunseling</option><option value="Ziarah Cakna">Ziarah Cakna</option><option value="Mentoring">Mentoring</option><option value="Perjumpaan Ibu Bapa">Perjumpaan Ibu Bapa</option><option value="Maklum kepada ibu bapa">Maklum kepada ibu bapa</option><option value="Surat Amaran">Surat Amaran</option></select><label style="font-size:12px; font-weight:bold;">Catatan (*Jika ada):</label><textarea id="iC" class="form-control" rows="3"></textarea><div style="display:flex; gap:10px; margin-top:10px;"><button class="btn-header" style="background:var(--gov-blue); flex:1; height:40px;" onclick="saveIntv()">SIMPAN LOG</button><button class="btn-header" style="background:#888; flex:1; height:40px;" onclick="closeModal()">BATAL</button></div></div></div>
-<div id="modalPass" class="modal-overlay"><div class="modal-content"><h3 style="color:var(--gov-blue)">Akses Sulit Unit Disiplin</h3><p style="font-size:12px; margin:10px 0; color:#666;">Masukkan kata laluan:</p><input type="password" id="mP" class="form-control" placeholder="Kata Laluan"><button class="btn-header" style="background:var(--gov-blue); width:100%; height:40px; margin-left:0;" onclick="verifyMgmt()">MASUK</button></div></div>
+<div id="modalPass" class="modal-overlay"><div class="modal-content"><h3 style="color:var(--gov-blue)">Akses Sulit Unit Disiplin</h3><p style="font-size:12px; margin:10px 0; color:#666;">Masukkan kata laluan:</p><input type="password" id="mP" class="form-control" placeholder="Password"><button class="btn-header" style="background:var(--gov-blue); width:100%; height:40px; margin-left:0;" onclick="verifyMgmt()">MASUK</button></div></div>
 <div id="modalDelete" class="modal-overlay"><div class="modal-content" style="text-align: center;"><h3 style="color:var(--danger-red);">Padam?</h3><p style="font-size:13px; margin-bottom: 25px;">Data akan dipadam kekal.</p><input type="hidden" id="delRecId"><div style="display:flex; gap:10px;"><button class="btn-header" style="background:var(--danger-red); flex:1;" onclick="confirmDelete()">YA, PADAM</button><button class="btn-header" style="background:#888; flex:1;" onclick="document.getElementById('modalDelete').style.display='none'">BATAL</button></div></div></div>
 <div id="modalStdDetails" class="modal-overlay"><div class="modal-content" style="max-width: 550px; border-top: 5px solid var(--gov-gold);"><h3 id="detName"></h3><div style="max-height: 350px; overflow-y: auto;"><table style="width:100%; font-size:12px;"><tbody id="detBody"></tbody></table></div><button class="btn-header" style="background:#888; width:100%; margin-top:20px;" onclick="document.getElementById('modalStdDetails').style.display='none'">TUTUP</button></div></div>
 
@@ -304,7 +301,7 @@
     function confirmDelete() { document.getElementById('modalDelete').style.display='none'; const id=document.getElementById('delRecId').value; showLoader("MEMADAM..."); fetch(APP_URL,{method:"POST",body:JSON.stringify({action:"delete",id:id})}).then(()=>{ masterData=masterData.filter(r=>r.ID.toString()!==id.toString()); renderTables(); updateMgmtStats(); if(document.getElementById('mgmt-panel').style.display==='block')applyMgmtFilter(); hideLoader(); }); }
     function openIntv(id) { document.getElementById('intvId').value=id; document.getElementById('modalIntv').style.display='flex'; document.getElementById('iT').valueAsDate=new Date(); }
     function closeModal() { document.getElementById('modalIntv').style.display='none'; }
-    function saveIntv() { showLoader("MENGEMASKINI..."); const id=document.getElementById('intvId').value,v=`[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`,cat=document.getElementById('iC').value; fetch(APP_URL,{method:"POST",body:JSON.stringify({action:"updateIntervensi",id:id,intervensi:v,intCatatan:cat})}).then(()=>{ const idx=masterData.findIndex(r=>r.ID.toString()===id.toString()); if(idx!==-1){masterData[idx].Intervensi=v;masterData[idx]['Catatan Intervensi']=cat;} renderTables(); updateMgmtStats(); closeModal(); hideLoader(); }); }
+    function saveIntv() { showLoader("MENGEMASKINI..."); const id=document.getElementById('intvId').value,v=`[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`,cat=document.getElementById('iC').value; fetch(APP_URL,{method:"POST",body:JSON.stringify({action:"updateIntervensi",id:id,intervensi:v,intCatatan:cat})}).then(()=>{ const idx=masterData.findIndex(r=>r.ID.toString()===id.toString()); if(idx!==-1){masterData[idx].Intervensi=v;masterData[idx]['Catatan Intervensi']=cat;} renderTables(); updateMgmtStats(); if(document.getElementById('mgmt-panel').style.display==='block')applyMgmtFilter(); closeModal(); hideLoader(); }); }
     function reqMgmt() { document.getElementById('modalPass').style.display='flex'; }
     function verifyMgmt() { if(document.getElementById('mP').value==='BBC9401'){document.getElementById('modalPass').style.display='none';document.getElementById('main-system').style.display='none';document.getElementById('student-panel').style.display='none';document.getElementById('mgmt-panel').style.display='block';applyMgmtFilter();}else alert("Salah!"); }
     function backDash() { document.getElementById('mgmt-panel').style.display='none'; document.getElementById('student-panel').style.display='none'; document.getElementById('main-system').style.display='block'; }
@@ -313,8 +310,21 @@
     function renderStudentSummary() { const tb=document.getElementById('studentSummaryBody'); tb.innerHTML=''; const selK=document.getElementById('sFilterK').value; const sum={}; masterData.forEach(r=>{ if(selK!=='semua'&&r.Kelas!==selK)return; const k=r['Nama Murid']+"|||"+r.Kelas; if(!sum[k])sum[k]={nama:r['Nama Murid'],kelas:r.Kelas,count:0}; sum[k].count++; }); const sort=Object.values(sum).sort((a,b)=>b.count-a.count); if(sort.length===0)tb.innerHTML='<tr><td colspan="4">Tiada rekod</td></tr>'; else sort.forEach(s=>{ tb.innerHTML+=`<tr><td style="text-align:left; padding-left:30px; font-weight:bold; color:var(--gov-blue);">${s.nama}</td><td>${s.kelas}</td><td><span class="badge-count">${s.count}</span></td><td><button class="btn-emoji" onclick="viewStdDetails('${s.nama}','${s.kelas}')">📋</button><button class="btn-emoji" onclick="genStdPDF('${s.nama}','${s.kelas}')">🖨️</button></td></tr>`; }); }
     function viewStdDetails(n,k) { document.getElementById('detName').innerText=`Rekod Kesalahan: ${n} (${k})`; const tb=document.getElementById('detBody'); tb.innerHTML=''; masterData.filter(r=>r['Nama Murid']===n&&r.Kelas===k).reverse().forEach((r,i)=>{ tb.innerHTML+=`<tr><td style="padding:10px 5px; width:30px; color:var(--gov-gold); font-weight:bold;">${i+1}.</td><td style="padding:10px 5px;"><b>${r.Tarikh}</b><br>${r['Kategori Kes']} - ${r['Perincian Kes']}</td><td style="padding:10px 5px; color:var(--danger-red); font-weight:bold;">${r.Tindakan}</td></tr>`; }); document.getElementById('modalStdDetails').style.display='flex'; }
 
+    async function generatePDF(id) {
+        const r=masterData.find(x=>x.ID.toString()===id.toString()); showLoader("MENJANA PDF..."); const {jsPDF}=window.jspdf; const doc=new jsPDF('p','mm','a4'); doc.setDrawColor(15,38,88); doc.setLineWidth(1.2); doc.rect(8,8,194,281); doc.setDrawColor(197,160,89); doc.setLineWidth(0.5); doc.rect(10,10,190,277);
+        const logo=new Image(); logo.src="https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous"; await new Promise(res=>logo.onload=res); doc.addImage(logo,'PNG',15,15,22,22);
+        doc.setFont("helvetica","bold"); doc.setFontSize(14); doc.text("SJK(C) CHIO CHIAO, SALAK", 105, 22, null, null, "center"); doc.setFontSize(11); doc.text("LAPORAN REKOD DISIPLIN MURID", 105, 45, null, null, "center");
+        doc.autoTable({ startY: 55, theme:'plain', styles:{fontSize:10,cellPadding:4}, body:[['Tarikh Kejadian',': '+r.Tarikh],['Nama Murid',': '+r['Nama Murid']],['Kelas',': '+r.Kelas],['Kategori Kes',': '+r['Kategori Kes']],['Perincian Kes',': '+r['Perincian Kes']],['Tindakan',': '+r.Tindakan],['Status Intervensi',': '+r.Intervensi],['Catatan Intervensi',': '+(r['Catatan Intervensi']||'Tiada')],['Guru Merekod',': '+r['Guru Merekod']]] });
+        let sigY=doc.lastAutoTable.finalY+40; if(sigY>230){doc.addPage();sigY=40;}
+        doc.line(20,sigY,90,sigY); doc.text("(                                                                    )",20,sigY+8); doc.text("Ketua Guru Disiplin",20,sigY+15); doc.line(120,sigY,190,sigY); doc.text("(                                                                    )",120,sigY+8); doc.text("GPK HAL EHWAL MURID (HEM)",120,sigY+15);
+        for(let i=1;i<=doc.internal.getNumberOfPages();i++){doc.setPage(i);doc.setFontSize(10);doc.text("s.k.  Guru Besar",15,280);doc.text("      SJK(C) CHIO CHIAO",15,285);}
+        const pdfBase64 = doc.output('datauristring').split(',')[1];
+        fetch(APP_URL, {method:"POST", body:JSON.stringify({action:"savePDF", id:r.ID, tarikh:r.Tarikh, nama:r['Nama Murid'], pdfBase64:pdfBase64})});
+        doc.save(`Laporan_${r['Nama Murid']}.pdf`); hideLoader();
+    }
+
     async function genStdPDF(n,k) {
-        showLoader("MENJANA PDF..."); const recs=masterData.filter(r=>r['Nama Murid']===n&&r.Kelas===k).reverse();
+        showLoader("MENJANA PDF INDIVIDU..."); const recs=masterData.filter(r=>r['Nama Murid']===n&&r.Kelas===k).reverse();
         const { jsPDF }=window.jspdf; const doc=new jsPDF('p','mm','a4'); doc.setDrawColor(15,38,88); doc.setLineWidth(1.2); doc.rect(8,8,194,281); doc.setDrawColor(197,160,89); doc.setLineWidth(0.5); doc.rect(10,10,190,277);
         const logo=new Image(); logo.src="https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous"; await new Promise(res=>logo.onload=res); doc.addImage(logo,'PNG',15,15,22,22);
         doc.setFont("helvetica","bold"); doc.setFontSize(14); doc.text("SJK(C) CHIO CHIAO, SALAK",105,22,null,null,"center"); doc.setFontSize(11); doc.text("LAPORAN INDIVIDU DISIPLIN MURID",105,32,null,null,"center");
@@ -324,17 +334,6 @@
         doc.line(20,fy,90,fy); doc.text("(                                                                    )",20,fy+8); doc.text("Ketua Guru Disiplin",20,fy+15); doc.line(120,fy,190,fy); doc.text("(                                                                    )",120,fy+8); doc.text("GPK HAL EHWAL MURID (HEM)",120,fy+15);
         for(let i=1;i<=doc.internal.getNumberOfPages();i++){doc.setPage(i);doc.setFontSize(10);doc.text("s.k.  Guru Besar",15,280);doc.text("      SJK(C) CHIO CHIAO",15,285);}
         doc.save(`Laporan_Individu_${n}.pdf`); hideLoader();
-    }
-
-    async function genPDF(id) {
-        const r=masterData.find(x=>x.ID.toString()===id.toString()); showLoader("MENJANA PDF..."); const {jsPDF}=window.jspdf; const doc=new jsPDF('p','mm','a4'); doc.setDrawColor(15,38,88); doc.setLineWidth(1.2); doc.rect(8,8,194,281); doc.setDrawColor(197,160,89); doc.setLineWidth(0.5); doc.rect(10,10,190,277);
-        const logo=new Image(); logo.src="https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous"; await new Promise(res=>logo.onload=res); doc.addImage(logo,'PNG',15,15,22,22);
-        doc.setFont("helvetica","bold"); doc.setFontSize(14); doc.text("SJK(C) CHIO CHIAO, SALAK",105,22,null,null,"center"); doc.setFontSize(11); doc.text("LAPORAN REKOD DISIPLIN MURID",105,45,null,null,"center");
-        doc.autoTable({ startY:55, theme:'plain', styles:{fontSize:10,cellPadding:4}, body:[['Tarikh Kejadian',': '+r.Tarikh],['Nama Murid',': '+r['Nama Murid']],['Kelas',': '+r.Kelas],['Kategori Kes',': '+r['Kategori Kes']],['Perincian Kes',': '+r['Perincian Kes']],['Tindakan',': '+r.Tindakan],['Status Intervensi',': '+r.Intervensi],['Catatan Intervensi',': '+(r['Catatan Intervensi']||'Tiada')],['Guru Merekod',': '+r['Guru Merekod']]] });
-        let sigY=doc.lastAutoTable.finalY+40; if(sigY>230){doc.addPage();sigY=40;}
-        doc.line(20,sigY,90,sigY); doc.text("(                                                                    )",20,sigY+8); doc.text("Ketua Guru Disiplin",20,sigY+15); doc.line(120,sigY,190,sigY); doc.text("(                                                                    )",120,sigY+8); doc.text("GPK HAL EHWAL MURID (HEM)",120,sigY+15);
-        for(let i=1;i<=doc.internal.getNumberOfPages();i++){doc.setPage(i);doc.setFontSize(10);doc.text("s.k.  Guru Besar",15,280);doc.text("      SJK(C) CHIO CHIAO",15,285);}
-        doc.save(`Laporan_${r['Nama Murid']}.pdf`); hideLoader();
     }
 
     async function genMgmtPDF() {
