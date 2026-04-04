@@ -6,6 +6,7 @@
     <title>Sistem e-Disiplin | SJK(C) CHIO CHIAO</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -137,10 +138,10 @@
         <div class="card">
             <div class="card-title">REKOD TERKINI</div>
             
-            <!-- UPDATE: FILTER BAR DASHBOARD UTAMA -->
+            <!-- PERUBAHAN DI SINI: DEFAULT BUTTON DITUKAR -->
             <div class="filter-bar">
-                <button class="filter-btn active" id="fSemua" onclick="setFilter('semua')">Semua</button>
-                <button class="filter-btn" id="fBulan" onclick="setFilter('bulan')">Bulan Ini</button>
+                <button class="filter-btn" id="fSemua" onclick="setFilter('semua')">Semua</button>
+                <button class="filter-btn active" id="fBulan" onclick="setFilter('bulan')">Bulan Ini (Default)</button>
                 <select id="fKelas" class="form-control" style="width:auto; margin-bottom:0; padding: 7px 10px; font-size:12px;" onchange="setFilter('kelas')">
                     <option value="semua">-- Pilih Kelas --</option>
                 </select>
@@ -148,6 +149,7 @@
                     <option value="semua">-- Guru Melapor --</option>
                 </select>
             </div>
+            <!-- TAMAT PERUBAHAN -->
 
             <div class="table-container">
                 <table id="recordTable">
@@ -281,7 +283,10 @@
     const OPTIONS_URL = "https://script.google.com/macros/s/AKfycbwSKjlsBZ5BVzxfjJZkcUCOwl2R4JFyLfHpvl_N30sSXoFdBTvWXmfLzmh2urnsKoNiWw/exec";
 
     let masterData = [];
-    let currentFilter = 'semua';
+    
+    // PERUBAHAN DI SINI: DEFAULT FILTER = 'bulan'
+    let currentFilter = 'bulan';
+    
     let catChart = null;
     let clsChart = null;
     const listSemuaKelas = ['1A','2A','3A','4A','5A','6A'];
@@ -301,31 +306,20 @@
 
     function loadOptions() {
         fetch(OPTIONS_URL).then(r=>r.json()).then(d=>{
-            // Load Kelas Dropdown
             const kS = document.getElementById("kelas"); const fKMain = document.getElementById("fKelas"); const fKMgmt = document.getElementById("mFilterK"); const sFK = document.getElementById("sFilterK");
             Object.keys(d.kelasMap).forEach(k=>{ kS.innerHTML += `<option value="${k}">${k}</option>`; fKMain.innerHTML += `<option value="${k}">${k}</option>`; fKMgmt.innerHTML += `<option value="${k}">${k}</option>`; sFK.innerHTML += `<option value="${k}">${k}</option>`; });
             kS.onchange = () => {
                 const nS = document.getElementById("nama"); nS.innerHTML = '<option value="">-- PILIH MURID --</option>';
                 d.kelasMap[kS.value].forEach(n=>nS.innerHTML += `<option value="${n.toUpperCase()}">${n.toUpperCase()}</option>`);
             };
-
-            // Load Kategori & Perincian
             const jS = document.getElementById("jenis"); const fCMgmt = document.getElementById("mFilterC");
             Object.keys(d.kategoriMap).forEach(j=>{ jS.innerHTML += `<option value="${j}">${j}</option>`; fCMgmt.innerHTML += `<option value="${j}">${j}</option>`; });
             document.getElementById("jenis").onchange = () => {
                 const pS = document.getElementById("perincian"); pS.innerHTML = '<option value="">-- PERINCIAN KES --</option>';
                 d.kategoriMap[document.getElementById("jenis").value].forEach(p=>pS.innerHTML += `<option value="${p}">${p}</option>`);
             };
-
-            // Load Guru Dropdown (Untuk Borang & Filter)
-            const gS = document.getElementById("guru");
-            const fGMain = document.getElementById("fGuru");
-            d.guruList.forEach(g=>{ 
-                gS.innerHTML += `<option value="${g}">${g}</option>`;
-                fGMain.innerHTML += `<option value="${g}">${g}</option>`;
-            });
-
-            // Load Tindakan
+            const gS = document.getElementById("guru"); const fGMain = document.getElementById("fGuru");
+            d.guruList.forEach(g=>{ gS.innerHTML += `<option value="${g}">${g}</option>`; fGMain.innerHTML += `<option value="${g}">${g}</option>`; });
             d.tindakanList.forEach(t=>document.getElementById("tindakan").innerHTML += `<option value="${t}">${t}</option>`);
         });
     }
@@ -352,16 +346,8 @@
         if(t === 'semua' || t === 'bulan') {
             currentFilter = t;
             document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-            if(t==='semua') {
-                document.getElementById('fSemua').classList.add('active');
-                document.getElementById('fKelas').value = 'semua';
-                document.getElementById('fGuru').value = 'semua';
-            }
-            if(t==='bulan') {
-                document.getElementById('fBulan').classList.add('active');
-                document.getElementById('fKelas').value = 'semua';
-                document.getElementById('fGuru').value = 'semua';
-            }
+            if(t==='semua') { document.getElementById('fSemua').classList.add('active'); document.getElementById('fKelas').value = 'semua'; document.getElementById('fGuru').value = 'semua'; }
+            if(t==='bulan') { document.getElementById('fBulan').classList.add('active'); document.getElementById('fKelas').value = 'semua'; document.getElementById('fGuru').value = 'semua'; }
         } else {
             currentFilter = 'custom';
             document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
@@ -371,21 +357,14 @@
 
     function renderTables() {
         const tb = document.getElementById("tableBody"); tb.innerHTML = "";
-        const now = new Date(); 
-        const selK = document.getElementById('fKelas').value;
-        const selG = document.getElementById('fGuru').value;
+        const now = new Date(); const selK = document.getElementById('fKelas').value; const selG = document.getElementById('fGuru').value;
 
         let filtered = masterData.filter(r => {
             const rd = new Date(r.Tarikh);
             let match = true;
-
-            if(currentFilter==='bulan') {
-                if(rd.getMonth() !== now.getMonth() || rd.getFullYear() !== now.getFullYear()) match = false;
-            }
-            
+            if(currentFilter==='bulan') { if(rd.getMonth() !== now.getMonth() || rd.getFullYear() !== now.getFullYear()) match = false; }
             if (selK !== 'semua' && r.Kelas !== selK) match = false;
             if (selG !== 'semua' && r['Guru Merekod'] !== selG) match = false;
-
             return match;
         });
 
@@ -464,7 +443,7 @@
 
     function openIntv(id) { document.getElementById('intvId').value=id; document.getElementById('modalIntv').style.display='flex'; document.getElementById('iT').valueAsDate = new Date(); }
     function closeModal() { document.getElementById('modalIntv').style.display='none'; }
-    function saveIntv() { showLoader("MENGEMASKINI..."); fetch(APP_URL, {method:"POST", body:JSON.stringify({action:"updateIntervensi", id:document.getElementById('intvId').value, intervensi:`[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`, intCatatan:document.getElementById('iC').value})}).then(()=>{ closeModal(); fetchData(); }); }
+    function saveIntv() { showLoader("MENGEMASKINI..."); fetch(APP_URL, {method:"POST", body:JSON.stringify({action:"updateIntervensi", id:document.getElementById('intvId').value, intervensi:`[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`, intCatatan:document.getElementById('iC').value})}).then(()=>{ closeModal(); fetchData(); alert("Intervensi Diperbaharui!"); }); }
     function reqMgmt() { document.getElementById('modalPass').style.display='flex'; }
     function verifyMgmt() { if(document.getElementById('mP').value==='BBC9401'){ document.getElementById('modalPass').style.display='none'; document.getElementById('main-system').style.display='none'; document.getElementById('student-panel').style.display='none'; document.getElementById('mgmt-panel').style.display='block'; applyMgmtFilter(); } else alert("Akses ditolak."); }
     function backDash() { document.getElementById('mgmt-panel').style.display='none'; document.getElementById('student-panel').style.display='none'; document.getElementById('main-system').style.display='block'; }
