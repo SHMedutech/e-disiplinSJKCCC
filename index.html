@@ -75,6 +75,7 @@
         .cute-table { width: 100%; border-collapse: collapse; box-shadow: var(--shadow); border-radius: 12px; overflow: hidden; }
         .cute-table th { background: var(--gov-blue); color: var(--gov-gold); border-bottom: 4px solid var(--gov-gold); font-weight: bold; text-align: center; padding: 18px 15px; font-size: 14px;}
         .cute-table td { text-align: center; font-size: 14px; padding: 15px 15px; border-bottom: 1px dashed #eee; vertical-align: middle; background: white;}
+        .cute-table tr:last-child td { border-bottom: none; }
         .cute-table tr:hover td { background-color: #f9fbff; }
         .btn-emoji { background: transparent; border: 2px solid #eee; border-radius: 50%; width: 45px; height: 45px; font-size: 20px; cursor: pointer; transition: 0.2s; margin: 0 5px; display: inline-flex; justify-content: center; align-items: center;}
         .btn-emoji:hover { border-color: var(--gov-gold); background: #fffcf5; transform: scale(1.1); box-shadow: 0 4px 8px rgba(197, 160, 89, 0.2);}
@@ -233,12 +234,39 @@
         <div class="header-brand"><img src="https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"><div><h3 style="color:var(--gov-blue);">REKOD DISIPLIN MURID</h3><p style="font-size:11px;">Analisis Sejarah Individu</p></div></div>
         <button class="btn-header" style="background:#0056b3;" onclick="closeStudentPanel()">KEMBALI KE DASHBOARD</button>
     </header>
+    
     <main class="student-main-container">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; background: white; padding: 20px 30px; border-radius: 12px; box-shadow: var(--shadow); border-top: 5px solid var(--gov-gold);">
-            <div><h3 style="color:var(--gov-blue); font-size: 22px;">Pangkalan Data Murid</h3><span style="font-size:13px; color:#888;">Menyenaraikan rekod kumulatif kes untuk setiap murid.</span></div>
-            <div style="display:flex; align-items:center; gap:10px; background: #f4f7f9; padding: 10px 15px; border-radius: 8px;"><label style="font-size:13px; font-weight:bold;">TAPISAN KELAS:</label><select id="sFilterK" class="form-control" style="width:150px; margin-bottom:0; padding: 8px 10px; font-size:13px;" onchange="renderStudentSummary()"><option value="semua">Semua Kelas</option></select></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; background: white; padding: 20px 30px; border-radius: 12px; box-shadow: var(--shadow); border-top: 5px solid var(--gov-gold); flex-wrap: wrap; gap: 15px;">
+            <div>
+                <h3 style="color:var(--gov-blue); font-size: 22px; margin-bottom:5px;">Pangkalan Data Murid</h3>
+                <span style="font-size:13px; color:#888;">Menyenaraikan rekod kumulatif kes untuk setiap murid.</span>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:10px; background: #f4f7f9; padding: 10px 15px; border-radius: 8px; flex-wrap: wrap;">
+                <label style="font-size:13px; font-weight:bold; color:var(--gov-blue);">MULA:</label>
+                <input type="date" id="sDateS" class="form-control" style="width:130px; margin-bottom:0; padding: 8px 10px; font-size:13px;" onchange="renderStudentSummary()">
+                <label style="font-size:13px; font-weight:bold; color:var(--gov-blue);">TAMAT:</label>
+                <input type="date" id="sDateE" class="form-control" style="width:130px; margin-bottom:0; padding: 8px 10px; font-size:13px;" onchange="renderStudentSummary()">
+                <label style="font-size:13px; font-weight:bold; color:var(--gov-blue);">KELAS:</label>
+                <select id="sFilterK" class="form-control" style="width:120px; margin-bottom:0; padding: 8px 10px; font-size:13px;" onchange="renderStudentSummary()">
+                    <option value="semua">Semua Kelas</option>
+                </select>
+            </div>
         </div>
-        <div class="table-container" style="border-radius: 12px;"><table class="cute-table"><thead><tr><th style="text-align:left; padding-left:30px; width:35%;">Nama Murid</th><th style="width:15%;">Kelas</th><th style="width:25%;">Jumlah Rekod Kesalahan</th><th style="width:25%;">Perincian / PDF</th></tr></thead><tbody id="studentSummaryBody"></tbody></table></div>
+
+        <div class="table-container" style="border-radius: 12px;">
+            <table class="cute-table">
+                <thead>
+                    <tr>
+                        <th style="text-align:left; padding-left:30px; width:35%;">Nama Murid</th>
+                        <th style="width:15%;">Kelas</th>
+                        <th style="width:25%;">Jumlah Rekod Kesalahan</th>
+                        <th style="width:25%;">Perincian / PDF</th>
+                    </tr>
+                </thead>
+                <tbody id="studentSummaryBody"></tbody>
+            </table>
+        </div>
     </main>
 </div>
 
@@ -261,7 +289,6 @@
     const listSemuaKelas =['1A','2A','3A','4A','5A','6A'];
     const standardColors =['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'];
 
-    // --- PRE-FETCH DATA ---
     window.addEventListener('DOMContentLoaded', () => {
         loadOptions();
         fetch(APP_URL + "?action=read").then(r=>r.json()).then(d=>{ 
@@ -320,17 +347,19 @@
 
     document.getElementById('disciplineForm').onsubmit = async (e) => {
         e.preventDefault();
-        showLoader("MENYIMPAN DATA...");
+        showLoader("MENYIMPAN DATA (Sila Tunggu)...");
         const files = document.getElementById('bukti').files;
-        let imgs =[]; for(let i=0; i<files.length; i++) imgs.push(await compressImage(files[i]));
-        const payload = { action:"addRecord", id:Date.now(), tarikh:document.getElementById('tarikh').value, kelas:document.getElementById('kelas').value, nama:document.getElementById('nama').value, jenis:document.getElementById('jenis').value, perincian:document.getElementById('perincian').value, tindakan:document.getElementById('tindakan').value, guru:document.getElementById('guru').value, images:imgs };
+        let imgs =[]; for(let i=0; i<files.length; i++) { imgs.push(await compressImage(files[i])); }
         
-        fetch(APP_URL, { method:"POST", body:JSON.stringify(payload) }).then(()=>{ 
-            masterData.push({ "ID": payload.id, "Tarikh": payload.tarikh, "Kelas": payload.kelas, "Nama Murid": payload.nama, "Kategori Kes": payload.jenis, "Perincian Kes": payload.perincian, "Tindakan": payload.tindakan, "Intervensi": "TIADA", "Catatan Intervensi": "", "Guru Merekod": payload.guru, "Gambar Links": "" });
+        const payload = { action:"addRecord", id:Date.now(), tarikh:document.getElementById('tarikh').value, kelas:document.getElementById('kelas').value, nama:document.getElementById('nama').value, jenis:document.getElementById('jenis').value, perincian:document.getElementById('perincian').value, tindakan:document.getElementById('tindakan').value, guru:document.getElementById('guru').value, images:imgs };
+
+        fetch(APP_URL, { method:"POST", body:JSON.stringify(payload) }).then(r => r.text()).then(() => { 
+            const newRec = { "ID": payload.id, "Tarikh": payload.tarikh, "Kelas": payload.kelas, "Nama Murid": payload.nama, "Kategori Kes": payload.jenis, "Perincian Kes": payload.perincian, "Tindakan": payload.tindakan, "Intervensi": "TIADA", "Catatan Intervensi": "", "Guru Merekod": payload.guru, "Gambar Links": "" };
+            masterData.push(newRec);
             renderTables(); updateMgmtStats(); if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
             document.getElementById('disciplineForm').reset(); document.getElementById('tarikh').valueAsDate = new Date();
             hideLoader(); alert("Rekod Berjaya Disimpan!"); 
-        }).catch(err => { hideLoader(); alert("Ralat menyimpan rekod."); });
+        }).catch(err => { hideLoader(); alert("Gagal simpan. Sila semak capaian internet."); });
     };
 
     function setFilter(t) {
@@ -426,9 +455,7 @@
     function closeModal() { document.getElementById('modalIntv').style.display='none'; }
     function saveIntv() { 
         showLoader("MENGEMASKINI..."); 
-        const id = document.getElementById('intvId').value;
-        const intvVal = `[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`;
-        const catatan = document.getElementById('iC').value;
+        const id = document.getElementById('intvId').value; const intvVal = `[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`; const catatan = document.getElementById('iC').value;
         fetch(APP_URL, {method:"POST", body:JSON.stringify({action:"updateIntervensi", id:id, intervensi:intvVal, intCatatan:catatan})}).then(()=>{ 
             const idx = masterData.findIndex(r => r.ID.toString() === id.toString());
             if(idx !== -1) { masterData[idx].Intervensi = intvVal; masterData[idx]['Catatan Intervensi'] = catatan; }
@@ -445,13 +472,21 @@
 
     function renderStudentSummary() {
         const tbody = document.getElementById('studentSummaryBody'); tbody.innerHTML = '';
-        const selKelas = document.getElementById('sFilterK').value; const summary = {};
+        const selKelas = document.getElementById('sFilterK').value; 
+        const sDate = document.getElementById('sDateS').value; 
+        const eDate = document.getElementById('sDateE').value;
+        const summary = {};
+        
         masterData.forEach(r => {
             if (selKelas !== 'semua' && r.Kelas !== selKelas) return;
+            if (sDate && r.Tarikh < sDate) return;
+            if (eDate && r.Tarikh > eDate) return;
+
             const key = r['Nama Murid'] + "|||" + r.Kelas;
             if(!summary[key]) summary[key] = { nama: r['Nama Murid'], kelas: r.Kelas, count: 0 };
             summary[key].count++;
         });
+
         const sorted = Object.values(summary).sort((a,b) => b.count - a.count);
         if(sorted.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#888;">Tiada rekod data murid untuk tapisan ini.</td></tr>'; return; }
         sorted.forEach(s => {
@@ -462,25 +497,59 @@
     function viewStdDetails(nama, kelas) {
         document.getElementById('detName').innerText = `Rekod Kesalahan: ${nama} (${kelas})`;
         const tbody = document.getElementById('detBody'); tbody.innerHTML = '';
-        const records = masterData.filter(r => r['Nama Murid'] === nama && r.Kelas === kelas).reverse();
+        const sDate = document.getElementById('sDateS').value; const eDate = document.getElementById('sDateE').value;
+        
+        const records = masterData.filter(r => {
+            if(r['Nama Murid'] !== nama || r.Kelas !== kelas) return false;
+            if(sDate && r.Tarikh < sDate) return false;
+            if(eDate && r.Tarikh > eDate) return false;
+            return true;
+        }).reverse();
+
         records.forEach((r, i) => { tbody.innerHTML += `<tr style="border-bottom:1px dashed #ddd;"><td style="padding:10px 5px; width:30px; font-weight:bold; color:var(--gov-gold);">${i+1}.</td><td style="padding:10px 5px;"><b>${r.Tarikh}</b><br><span style="color:#555;">${r['Kategori Kes']} - ${r['Perincian Kes']}</span></td><td style="padding:10px 5px; color:var(--danger-red); font-weight:500;">${r.Tindakan}</td></tr>`; });
         document.getElementById('modalStdDetails').style.display = 'flex';
     }
 
     async function genStdPDF(nama, kelas) {
-        showLoader("MENJANA PDF INDIVIDU..."); const records = masterData.filter(r => r['Nama Murid'] === nama && r.Kelas === kelas).reverse();
+        showLoader("MENJANA PDF INDIVIDU..."); 
+        const sDate = document.getElementById('sDateS').value; const eDate = document.getElementById('sDateE').value;
+        
+        const records = masterData.filter(r => {
+            if(r['Nama Murid'] !== nama || r.Kelas !== kelas) return false;
+            if(sDate && r.Tarikh < sDate) return false;
+            if(eDate && r.Tarikh > eDate) return false;
+            return true;
+        }).reverse();
+        
         const { jsPDF } = window.jspdf; const doc = new jsPDF('p', 'mm', 'a4');
         doc.setDrawColor(15, 38, 88); doc.setLineWidth(1.2); doc.rect(8, 8, 194, 281); doc.setDrawColor(197, 160, 89); doc.setLineWidth(0.5); doc.rect(10, 10, 190, 277);
         const logo = new Image(); logo.src = "https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous"; await new Promise(res => logo.onload = res); doc.addImage(logo, 'PNG', 15, 15, 22, 22);
+        
         doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.text("SJK(C) CHIO CHIAO, SALAK", 105, 22, null, null, "center");
         doc.setFontSize(11); doc.text("LAPORAN INDIVIDU DISIPLIN MURID", 105, 32, null, null, "center");
-        doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text(`Nama Murid : ${nama}`, 15, 45); doc.text(`Kelas : ${kelas}`, 15, 51); doc.text(`Jumlah Rekod : ${records.length} Kes`, 15, 57);
-        const rows = records.map((r, i) => [i+1, r.Tarikh, r['Kategori Kes'] + "\n(" + r['Perincian Kes'] + ")", r.Tindakan, r.Intervensi, r['Guru Merekod']]);
-        doc.autoTable({ startY: 62, head: [['No.', 'Tarikh', 'Kesalahan', 'Tindakan', 'Intervensi', 'Guru']], body: rows, theme: 'grid', styles: { fontSize: 8 }, headStyles: { fillColor:[15, 38, 88], textColor:[197, 160, 89] } });
+        
+        doc.setFontSize(10); doc.setFont("helvetica", "normal");
+        doc.text(`Nama Murid : ${nama}`, 15, 45);
+        doc.text(`Kelas : ${kelas}`, 15, 51);
+        doc.text(`Jumlah Rekod : ${records.length} Kes`, 15, 57);
+
+        let julatText = "Keseluruhan";
+        function fDot(ds) { if(!ds) return ""; const p = ds.split('-'); return `${p[2]}.${p[1]}.${p[0]}`; }
+        if (sDate && eDate) julatText = `${fDot(sDate)} - ${fDot(eDate)}`;
+        else if (sDate) julatText = `Bermula ${fDot(sDate)}`;
+        else if (eDate) julatText = `Sehingga ${fDot(eDate)}`;
+        doc.text(`Julat Tarikh : ${julatText}`, 15, 63);
+
+        const rows = records.map((r, i) =>[i+1, r.Tarikh, r['Kategori Kes'] + "\n(" + r['Perincian Kes'] + ")", r.Tindakan, r.Intervensi, r['Guru Merekod']]);
+        doc.autoTable({ startY: 68, head: [['No.', 'Tarikh', 'Kesalahan', 'Tindakan', 'Intervensi', 'Guru']], body: rows, theme: 'grid', styles: { fontSize: 8 }, headStyles: { fillColor:[15, 38, 88], textColor:[197, 160, 89] } });
+
         let fy = doc.lastAutoTable.finalY + 20; if(fy > 230) { doc.addPage(); fy = 30; }
         doc.line(20, fy, 90, fy); doc.text("(                                                                    )", 20, fy+8); doc.text("Ketua Guru Disiplin", 20, fy+15); doc.text("Tarikh: ________________", 20, fy+22);
         doc.line(120, fy, 190, fy); doc.text("(                                                                    )", 120, fy+8); doc.text("GPK HAL EHWAL MURID (HEM)", 120, fy+15); doc.text("Tarikh: ________________", 120, fy+22);
-        const pageCount = doc.internal.getNumberOfPages(); for (let i = 1; i <= pageCount; i++) { doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("s.k.  Guru Besar", 15, 280); doc.text("      SJK(C) CHIO CHIAO", 15, 285); }
+
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) { doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("s.k.  Guru Besar", 15, 280); doc.text("      SJK(C) CHIO CHIAO", 15, 285); }
+
         doc.save(`Laporan_Individu_${nama}.pdf`); hideLoader();
     }
 
@@ -498,8 +567,10 @@
         const r = masterData.find(x => x.ID.toString() === id.toString());
         showLoader("MENJANA PDF...");
         const { jsPDF } = window.jspdf; const doc = new jsPDF('p', 'mm', 'a4');
-        doc.setDrawColor(15, 38, 88); doc.setLineWidth(1.2); doc.rect(8, 8, 194, 281); doc.setDrawColor(197, 160, 89); doc.setLineWidth(0.5); doc.rect(10, 10, 190, 277);
-        const logo = new Image(); logo.src = "https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous"; await new Promise(res => logo.onload = res); doc.addImage(logo, 'PNG', 15, 15, 22, 22);
+        doc.setDrawColor(15, 38, 88); doc.setLineWidth(1.2); doc.rect(8, 8, 194, 281);
+        doc.setDrawColor(197, 160, 89); doc.setLineWidth(0.5); doc.rect(10, 10, 190, 277);
+        const logo = new Image(); logo.src = "https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous";
+        await new Promise(res => logo.onload = res); doc.addImage(logo, 'PNG', 15, 15, 22, 22);
         doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.text("SJK(C) CHIO CHIAO, SALAK", 105, 22, null, null, "center");
         doc.setFontSize(11); doc.text("LAPORAN REKOD DISIPLIN MURID", 105, 45, null, null, "center");
         doc.autoTable({ startY: 55, theme:'plain', styles:{fontSize:10, cellPadding:4}, body: [['Tarikh Kejadian',': '+r.Tarikh],['Nama Murid',': '+r['Nama Murid']],['Kelas',': '+r.Kelas],['Kategori Kes',': '+r['Kategori Kes']],['Perincian Kes',': '+r['Perincian Kes']],['Tindakan',': '+r.Tindakan],['Status Intervensi',': '+r.Intervensi],['Catatan Intervensi',': '+(r['Catatan Intervensi']||'Tiada')],['Guru Merekod',': '+r['Guru Merekod']]] });
@@ -523,24 +594,34 @@
         doc.save(`Laporan_${r['Nama Murid']}.pdf`); hideLoader();
     }
 
+    function formatDateMY(dateStr) {
+        if(!dateStr) return ""; const parts = dateStr.split('-'); return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+
     async function genMgmtPDF() {
         const s = document.getElementById('mS').value; const e = document.getElementById('mE').value;
         const k = document.getElementById('mFilterK').value; const c = document.getElementById('mFilterC').value;
         let data = masterData.filter(r => (!s || r.Tarikh >= s) && (!e || r.Tarikh <= e) && (k==='semua' || r.Kelas===k) && (c==='semua' || r['Kategori Kes']===c));
         if(data.length === 0) return alert("Tiada data!");
         const { jsPDF } = window.jspdf; const doc = new jsPDF('l', 'mm', 'a4');
-        const img = new Image(); img.src = "https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; img.crossOrigin = "Anonymous";
-        await new Promise(res => img.onload = res); doc.addImage(img, 'PNG', 15, 15, 22, 22);
+        let title = "LAPORAN KESELURUHAN REKOD DISIPLIN MURID";
+        if (s && e) title = `LAPORAN DARI ${formatDateMY(s)} HINGGA ${formatDateMY(e)}`;
+        else if (k !== 'semua') title = `LAPORAN DISIPLIN KELAS ${k}`;
+        else if (c !== 'semua') title = `LAPORAN KES ${c}`;
+        doc.setDrawColor(15, 38, 88); doc.setLineWidth(1.2); doc.rect(10, 10, 277, 190);
+        doc.setDrawColor(197, 160, 89); doc.setLineWidth(0.5); doc.rect(11.5, 11.5, 274, 187);
+        const img = new Image(); img.src = "https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; img.crossOrigin = "Anonymous"; await new Promise(res => img.onload = res());
+        doc.addImage(img, 'PNG', 15, 15, 22, 22);
         doc.setFont("helvetica", "bold"); doc.setFontSize(15); doc.text("SJK(C) CHIO CHIAO, SALAK", 148, 22, null, null, "center");
-        doc.setFontSize(11); doc.text("LAPORAN UNIT DISIPLIN MURID", 148, 30, null, null, "center");
-        doc.autoTable({ startY: 40, head: [['Tarikh', 'Nama Murid', 'Kelas', 'Kategori', 'Perincian', 'Tindakan/Intv', 'Guru']], body: data.map(r => [r.Tarikh, r['Nama Murid'], r.Kelas, r['Kategori Kes'], r['Perincian Kes'], r.Tindakan + "\n" + r.Intervensi, r['Guru Merekod']]), theme: 'grid', styles: { fontSize: 9 }, headStyles: { fillColor: [15, 38, 88] } });
-        let fy = doc.lastAutoTable.finalY + 25; if(fy > 170) { doc.addPage(); fy = 30; }
-        doc.line(30, fy, 110, fy); doc.text("(                                                                    )", 70, fy+8, null, null, "center"); doc.text("Ketua Guru Disiplin", 70, fy+15, null, null, "center");
-        doc.line(180, fy, 260, fy); doc.text("(                                                                    )", 220, fy+8, null, null, "center"); doc.text("GPK HAL EHWAL MURID (HEM)", 220, fy+15, null, null, "center");
-        
+        doc.setFontSize(11); doc.text(title.toUpperCase(), 148, 30, null, null, "center");
+        const rows = data.map(r =>[r.Tarikh, r['Nama Murid'], r.Kelas, r['Kategori Kes'], r['Perincian Kes'], r.Tindakan + "\n" + r.Intervensi, r['Guru Merekod']]);
+        doc.autoTable({ startY: 40, head: [['Tarikh', 'Nama Murid', 'Kelas', 'Kategori Kes', 'Perincian Kesalahan', 'Tindakan/Intv', 'Guru']], body: rows, theme: 'grid', styles: { fontSize: 9 }, headStyles: { fillColor: [15, 38, 88] }, margin: { left: 15, right: 15 } });
+        let fy = doc.lastAutoTable.finalY + 25; if(fy > 170) { doc.addPage(); fy = 30; } 
+        doc.setFontSize(10); doc.setFont("helvetica", "normal");
+        doc.line(30, fy, 110, fy); doc.text("(                                                                    )", 70, fy+8, null, null, "center"); doc.text("Ketua Guru Disiplin", 70, fy+15, null, null, "center"); doc.text("Tarikh: ________________", 70, fy+22, null, null, "center");
+        doc.line(180, fy, 260, fy); doc.text("(                                                                    )", 220, fy+8, null, null, "center"); doc.text("GPK HAL EHWAL MURID (HEM)", 220, fy+15, null, null, "center"); doc.text("Tarikh: ________________", 220, fy+22, null, null, "center");
         const pageCountMgmt = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pageCountMgmt; i++) { doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("s.k.  Guru Besar", 15, 192); doc.text("      SJK(C) CHIO CHIAO", 15, 197); }
-
         doc.save(`Laporan_Unit_Disiplin.pdf`);
     }
 </script>
