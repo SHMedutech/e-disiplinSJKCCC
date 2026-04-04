@@ -30,11 +30,11 @@
 
         /* 2. DASHBOARD & MGMT */
         #main-system, #mgmt-panel, #student-panel { display: none; }
-        header { background: var(--white); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
+        header { background: var(--white); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); position: fixed; top: 0; left: 0; width: 100%; z-index: 999; }
         .header-brand { display: flex; align-items: center; gap: 15px; }
         .header-brand img { height: 50px; }
         .btn-header { padding: 8px 16px; border-radius: 6px; font-size: 13px; color: white; border: none; cursor: pointer; font-weight: bold; margin-left: 5px; }
-        .container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; padding: 25px 5%; }
+        .container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; padding: 25px 5%; margin-top: 90px; }
         .card { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 20px; }
         .card-title { font-size: 16px; font-weight: 700; color: var(--gov-blue); margin-bottom: 15px; border-bottom: 2px solid var(--gov-gold); padding-bottom: 5px; }
         .table-container { overflow-x: auto; background: white; border-radius: 8px; }
@@ -68,13 +68,13 @@
         #mgmtTable { table-layout: auto; min-width: 1000px; }
         #mgmtTable th, #mgmtTable td { white-space: nowrap; vertical-align: middle; }
         #mgmtTable td:nth-child(5), #mgmtTable td:nth-child(6) { white-space: normal; min-width: 180px; }
+        .mgmt-main-container { padding: 25px 5%; margin-top: 90px; }
 
         /* 4. PANEL REKOD MURID */
-        .student-main-container { padding: 25px 2.5%; } 
+        .student-main-container { padding: 25px 2.5%; margin-top: 90px; } 
         .cute-table { width: 100%; border-collapse: collapse; box-shadow: var(--shadow); border-radius: 12px; overflow: hidden; }
         .cute-table th { background: var(--gov-blue); color: var(--gov-gold); border-bottom: 4px solid var(--gov-gold); font-weight: bold; text-align: center; padding: 18px 15px; font-size: 14px;}
         .cute-table td { text-align: center; font-size: 14px; padding: 15px 15px; border-bottom: 1px dashed #eee; vertical-align: middle; background: white;}
-        .cute-table tr:last-child td { border-bottom: none; }
         .cute-table tr:hover td { background-color: #f9fbff; }
         .btn-emoji { background: transparent; border: 2px solid #eee; border-radius: 50%; width: 45px; height: 45px; font-size: 20px; cursor: pointer; transition: 0.2s; margin: 0 5px; display: inline-flex; justify-content: center; align-items: center;}
         .btn-emoji:hover { border-color: var(--gov-gold); background: #fffcf5; transform: scale(1.1); box-shadow: 0 4px 8px rgba(197, 160, 89, 0.2);}
@@ -88,7 +88,7 @@
         .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--gov-blue); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        @media (max-width: 992px) { .container, .mgmt-stats-grid, .charts-container { grid-template-columns: 1fr; } table { table-layout: auto; } }
+        @media (max-width: 992px) { .container, .mgmt-stats-grid, .charts-container { grid-template-columns: 1fr; } table { table-layout: auto; } header { position: relative; } .container, .student-main-container, .mgmt-main-container { margin-top: 0; } }
     </style>
 </head>
 <body>
@@ -171,7 +171,7 @@
         <div class="header-brand"><img src="https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"><div><h3 style="color:var(--gov-blue);">PANEL PENGURUSAN UNIT DISIPLIN</h3><p style="font-size:11px;">Analisis & Kawalan Data (SULIT)</p></div></div>
         <button class="btn-header" style="background:#0056b3;" onclick="backDash()">KEMBALI KE DASHBOARD</button>
     </header>
-    <main style="padding:25px 5%;">
+    <main class="mgmt-main-container">
         <div class="mgmt-stats-grid">
             <div class="stat-card">
                 <h4>Ringkasan Keseluruhan</h4>
@@ -233,34 +233,12 @@
         <div class="header-brand"><img src="https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"><div><h3 style="color:var(--gov-blue);">REKOD DISIPLIN MURID</h3><p style="font-size:11px;">Analisis Sejarah Individu</p></div></div>
         <button class="btn-header" style="background:#0056b3;" onclick="closeStudentPanel()">KEMBALI KE DASHBOARD</button>
     </header>
-    
     <main class="student-main-container">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; background: white; padding: 20px 30px; border-radius: 12px; box-shadow: var(--shadow); border-top: 5px solid var(--gov-gold);">
-            <div>
-                <h3 style="color:var(--gov-blue); font-size: 22px; margin-bottom:5px;">Pangkalan Data Murid</h3>
-                <span style="font-size:13px; color:#888;">Menyenaraikan rekod kumulatif kes untuk setiap murid.</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:10px; background: #f4f7f9; padding: 10px 15px; border-radius: 8px;">
-                <label style="font-size:13px; font-weight:bold; color:var(--gov-blue);">TAPISAN KELAS:</label>
-                <select id="sFilterK" class="form-control" style="width:150px; margin-bottom:0; padding: 8px 10px; font-size:13px;" onchange="renderStudentSummary()">
-                    <option value="semua">Semua Kelas</option>
-                </select>
-            </div>
+            <div><h3 style="color:var(--gov-blue); font-size: 22px;">Pangkalan Data Murid</h3><span style="font-size:13px; color:#888;">Menyenaraikan rekod kumulatif kes untuk setiap murid.</span></div>
+            <div style="display:flex; align-items:center; gap:10px; background: #f4f7f9; padding: 10px 15px; border-radius: 8px;"><label style="font-size:13px; font-weight:bold;">TAPISAN KELAS:</label><select id="sFilterK" class="form-control" style="width:150px; margin-bottom:0; padding: 8px 10px; font-size:13px;" onchange="renderStudentSummary()"><option value="semua">Semua Kelas</option></select></div>
         </div>
-
-        <div class="table-container" style="border-radius: 12px;">
-            <table class="cute-table">
-                <thead>
-                    <tr>
-                        <th style="text-align:left; padding-left:30px; width:35%;">Nama Murid</th>
-                        <th style="width:15%;">Kelas</th>
-                        <th style="width:25%;">Jumlah Rekod Kesalahan</th>
-                        <th style="width:25%;">Perincian / PDF</th>
-                    </tr>
-                </thead>
-                <tbody id="studentSummaryBody"></tbody>
-            </table>
-        </div>
+        <div class="table-container" style="border-radius: 12px;"><table class="cute-table"><thead><tr><th style="text-align:left; padding-left:30px; width:35%;">Nama Murid</th><th style="width:15%;">Kelas</th><th style="width:25%;">Jumlah Rekod Kesalahan</th><th style="width:25%;">Perincian / PDF</th></tr></thead><tbody id="studentSummaryBody"></tbody></table></div>
     </main>
 </div>
 
@@ -278,18 +256,27 @@
     const OPTIONS_URL = "https://script.google.com/macros/s/AKfycbwSKjlsBZ5BVzxfjJZkcUCOwl2R4JFyLfHpvl_N30sSXoFdBTvWXmfLzmh2urnsKoNiWw/exec";
 
     let masterData =[];
-    let currentFilter = 'bulan'; // Default diset kepada bulan
-    let catChart = null;
-    let clsChart = null;
+    let currentFilter = 'bulan'; 
+    let catChart = null; let clsChart = null; let isDataReady = false;
     const listSemuaKelas =['1A','2A','3A','4A','5A','6A'];
     const standardColors =['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'];
+
+    // --- PRE-FETCH DATA ---
+    window.addEventListener('DOMContentLoaded', () => {
+        loadOptions();
+        fetch(APP_URL + "?action=read").then(r=>r.json()).then(d=>{ 
+            masterData = d; isDataReady = true; 
+            if(document.getElementById('main-system').style.display === 'block') { renderTables(); updateMgmtStats(); hideLoader(); }
+        }).catch(e => console.log(e));
+    });
 
     function handleLogin() {
         if(document.getElementById('username').value==='disp' && document.getElementById('password').value==='1234') {
             document.getElementById('login-screen').style.display='none';
             document.getElementById('main-system').style.display='block';
             document.getElementById('tarikh').valueAsDate = new Date();
-            loadOptions(); fetchData();
+            if(isDataReady) { renderTables(); updateMgmtStats(); } 
+            else { showLoader("MEMUAT DATA..."); }
         } else alert("Ralat: ID atau Kata Laluan Salah!");
     }
 
@@ -316,29 +303,40 @@
         });
     }
 
-    function fetchData() {
-        showLoader("MEMUAT DATA...");
-        fetch(APP_URL + "?action=read").then(r=>r.json()).then(d=>{ masterData = d; renderTables(); updateMgmtStats(); hideLoader(); });
-    }
-
-    async function getBase64(file) {
-        return new Promise((res) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => res({data: reader.result.split(',')[1], type: file.type}); });
+    async function compressImage(file, maxWidth = 600) {
+        return new Promise((resolve) => {
+            const reader = new FileReader(); reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image(); img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas'); const ratio = maxWidth / img.width;
+                    canvas.width = ratio > 1 ? img.width : maxWidth; canvas.height = ratio > 1 ? img.height : img.height * ratio;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve({ data: canvas.toDataURL('image/jpeg', 0.6).split(',')[1], type: 'image/jpeg' });
+                };
+            };
+        });
     }
 
     document.getElementById('disciplineForm').onsubmit = async (e) => {
         e.preventDefault();
         showLoader("MENYIMPAN DATA...");
         const files = document.getElementById('bukti').files;
-        let imgs =[]; for(let i=0; i<files.length; i++) imgs.push(await getBase64(files[i]));
+        let imgs =[]; for(let i=0; i<files.length; i++) imgs.push(await compressImage(files[i]));
         const payload = { action:"addRecord", id:Date.now(), tarikh:document.getElementById('tarikh').value, kelas:document.getElementById('kelas').value, nama:document.getElementById('nama').value, jenis:document.getElementById('jenis').value, perincian:document.getElementById('perincian').value, tindakan:document.getElementById('tindakan').value, guru:document.getElementById('guru').value, images:imgs };
-        fetch(APP_URL, { method:"POST", body:JSON.stringify(payload) }).then(()=>{ alert("Rekod Berjaya Disimpan!"); document.getElementById('disciplineForm').reset(); fetchData(); });
+        
+        fetch(APP_URL, { method:"POST", body:JSON.stringify(payload) }).then(()=>{ 
+            masterData.push({ "ID": payload.id, "Tarikh": payload.tarikh, "Kelas": payload.kelas, "Nama Murid": payload.nama, "Kategori Kes": payload.jenis, "Perincian Kes": payload.perincian, "Tindakan": payload.tindakan, "Intervensi": "TIADA", "Catatan Intervensi": "", "Guru Merekod": payload.guru, "Gambar Links": "" });
+            renderTables(); updateMgmtStats(); if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
+            document.getElementById('disciplineForm').reset(); document.getElementById('tarikh').valueAsDate = new Date();
+            hideLoader(); alert("Rekod Berjaya Disimpan!"); 
+        }).catch(err => { hideLoader(); alert("Ralat menyimpan rekod."); });
     };
 
     function setFilter(t) {
         if(t === 'semua' || t === 'bulan') {
             currentFilter = t;
             document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-            if(t==='semua') { document.getElementById('fSemua').classList.add('active'); document.getElementById('fKelas').value = 'semua'; document.getElementById('fGuru').value = 'semua'; }
             if(t==='bulan') { document.getElementById('fBulan').classList.add('active'); document.getElementById('fKelas').value = 'semua'; document.getElementById('fGuru').value = 'semua'; }
         } else {
             currentFilter = 'custom';
@@ -354,16 +352,13 @@
         let filtered = masterData.filter(r => {
             const rd = new Date(r.Tarikh);
             let match = true;
-
-            if(currentFilter==='bulan') {
-                if(rd.getMonth() !== now.getMonth() || rd.getFullYear() !== now.getFullYear()) match = false;
-            }
-            
+            if(currentFilter==='bulan') { if(rd.getMonth() !== now.getMonth() || rd.getFullYear() !== now.getFullYear()) match = false; }
             if (selK !== 'semua' && r.Kelas !== selK) match = false;
             if (selG !== 'semua' && r['Guru Merekod'] !== selG) match = false;
-
             return match;
-        });[...filtered].reverse().forEach(r => {
+        });
+
+        [...filtered].reverse().forEach(r => {
             tb.innerHTML += `<tr>
                 <td class="col-date">${r.Tarikh}</td>
                 <td><strong>${r['Nama Murid']}</strong><br><small>${r.Kelas}</small></td>
@@ -387,24 +382,17 @@
         const classMap = {}; listSemuaKelas.forEach(c => classMap[c] = 0); 
         masterData.forEach(r => { if(classMap.hasOwnProperty(r.Kelas)) classMap[r.Kelas]++; });
         const breakdownDiv = document.getElementById('statClassBreakdown'); breakdownDiv.innerHTML = "";
-        Object.keys(classMap).sort().forEach((c, i) => {
-            const color = standardColors[i % standardColors.length];
-            breakdownDiv.innerHTML += `<div class="item-pill" style="background:${color}; border-color:${color};">${c} <b>${classMap[c]}</b></div>`;
-        });
+        Object.keys(classMap).sort().forEach((c, i) => { const color = standardColors[i % standardColors.length]; breakdownDiv.innerHTML += `<div class="item-pill" style="background:${color}; border-color:${color};">${c} <b>${classMap[c]}</b></div>`; });
 
         const catMap = {}; masterData.forEach(r => catMap[r['Kategori Kes']] = (catMap[r['Kategori Kes']] || 0) + 1);
         const catDiv = document.getElementById('statCategoryBreakdown'); catDiv.innerHTML = "";
-        Object.keys(catMap).sort().forEach((cat, i) => {
-            const color = standardColors[(i+2) % standardColors.length];
-            catDiv.innerHTML += `<div class="item-pill" style="background:${color}; border-color:${color};">${cat}: <b>${catMap[cat]} kes</b></div>`;
-        });
+        Object.keys(catMap).sort().forEach((cat, i) => { const color = standardColors[(i+2) % standardColors.length]; catDiv.innerHTML += `<div class="item-pill" style="background:${color}; border-color:${color};">${cat}: <b>${catMap[cat]} kes</b></div>`; });
 
         renderCharts(catMap, classMap);
     }
 
     function renderCharts(catData, clsData) {
-        if(catChart) catChart.destroy();
-        if(clsChart) clsChart.destroy();
+        if(catChart) catChart.destroy(); if(clsChart) clsChart.destroy();
         catChart = new Chart(document.getElementById('categoryChart'), { type: 'doughnut', data: { labels: Object.keys(catData), datasets:[{ data: Object.values(catData), backgroundColor: standardColors, hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } } });
         clsChart = new Chart(document.getElementById('classChart'), { type: 'bar', data: { labels: Object.keys(clsData), datasets:[{ label: 'Bilangan Kes', data: Object.values(clsData), backgroundColor: standardColors, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } } });
     }
@@ -420,135 +408,79 @@
             return match;
         }).reverse(); 
         if(filtered.length === 0) mtb.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:#888;">Tiada rekod dijumpai</td></tr>';
-        else filtered.forEach(r => {
-            mtb.innerHTML += `<tr><td>${r.Tarikh}</td><td>${r['Nama Murid']}</td><td>${r.Kelas}</td><td>${r['Kategori Kes']}</td><td>${r['Perincian Kes']}</td><td>${r.Tindakan}<br><small>${r.Intervensi}</small></td><td>${r['Guru Merekod']}</td><td style="text-align:center;"><button class="btn-small btn-padam" onclick="delRec('${r.ID}')">PADAM</button></td></tr>`;
-        });
+        else filtered.forEach(r => { mtb.innerHTML += `<tr><td>${r.Tarikh}</td><td>${r['Nama Murid']}</td><td>${r.Kelas}</td><td>${r['Kategori Kes']}</td><td>${r['Perincian Kes']}</td><td>${r.Tindakan}<br><small>${r.Intervensi}</small></td><td>${r['Guru Merekod']}</td><td style="text-align:center;"><button class="btn-small btn-padam" onclick="delRec('${r.ID}')">PADAM</button></td></tr>`; });
     }
 
     function delRec(id) { document.getElementById('delRecId').value = id; document.getElementById('modalDelete').style.display = 'flex'; }
     function confirmDelete() {
-        document.getElementById('modalDelete').style.display = 'none';
-        const id = document.getElementById('delRecId').value;
-        showLoader("MEMADAM REKOD..."); 
+        document.getElementById('modalDelete').style.display = 'none'; const id = document.getElementById('delRecId').value; showLoader("MEMADAM REKOD..."); 
         fetch(APP_URL, { method: "POST", body: JSON.stringify({action:"delete", id:id}) }).then(res => res.text()).then(result => { 
-            fetchData(); setTimeout(() => { if(document.getElementById('mgmt-panel').style.display === 'block') applyMgmtFilter(); }, 1500);
-            document.getElementById('loader-text').innerText = "REKOD DIPADAM!"; setTimeout(() => hideLoader(), 1200);
+            masterData = masterData.filter(r => r.ID.toString() !== id.toString()); renderTables(); updateMgmtStats();
+            if(document.getElementById('mgmt-panel').style.display === 'block') applyMgmtFilter();
+            if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
+            hideLoader(); 
         });
     }
 
     function openIntv(id) { document.getElementById('intvId').value=id; document.getElementById('modalIntv').style.display='flex'; document.getElementById('iT').valueAsDate = new Date(); }
     function closeModal() { document.getElementById('modalIntv').style.display='none'; }
-    function saveIntv() { showLoader("MENGEMASKINI..."); fetch(APP_URL, {method:"POST", body:JSON.stringify({action:"updateIntervensi", id:document.getElementById('intvId').value, intervensi:`[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`, intCatatan:document.getElementById('iC').value})}).then(()=>{ closeModal(); fetchData(); }); }
+    function saveIntv() { 
+        showLoader("MENGEMASKINI..."); 
+        const id = document.getElementById('intvId').value;
+        const intvVal = `[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`;
+        const catatan = document.getElementById('iC').value;
+        fetch(APP_URL, {method:"POST", body:JSON.stringify({action:"updateIntervensi", id:id, intervensi:intvVal, intCatatan:catatan})}).then(()=>{ 
+            const idx = masterData.findIndex(r => r.ID.toString() === id.toString());
+            if(idx !== -1) { masterData[idx].Intervensi = intvVal; masterData[idx]['Catatan Intervensi'] = catatan; }
+            renderTables(); updateMgmtStats(); if(document.getElementById('mgmt-panel').style.display === 'block') applyMgmtFilter(); if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
+            closeModal(); hideLoader(); alert("Intervensi Diperbaharui!"); 
+        }); 
+    }
+
     function reqMgmt() { document.getElementById('modalPass').style.display='flex'; }
     function verifyMgmt() { if(document.getElementById('mP').value==='BBC9401'){ document.getElementById('modalPass').style.display='none'; document.getElementById('main-system').style.display='none'; document.getElementById('student-panel').style.display='none'; document.getElementById('mgmt-panel').style.display='block'; applyMgmtFilter(); } else alert("Akses ditolak."); }
     function backDash() { document.getElementById('mgmt-panel').style.display='none'; document.getElementById('student-panel').style.display='none'; document.getElementById('main-system').style.display='block'; }
-
-    // --- PANEL REKOD MURID ---
-    function openStudentPanel() {
-        document.getElementById('main-system').style.display = 'none';
-        document.getElementById('mgmt-panel').style.display = 'none';
-        document.getElementById('student-panel').style.display = 'block';
-        renderStudentSummary();
-    }
-
-    function closeStudentPanel() {
-        document.getElementById('student-panel').style.display = 'none';
-        document.getElementById('main-system').style.display = 'block';
-    }
+    function openStudentPanel() { document.getElementById('main-system').style.display = 'none'; document.getElementById('mgmt-panel').style.display = 'none'; document.getElementById('student-panel').style.display = 'block'; renderStudentSummary(); }
+    function closeStudentPanel() { document.getElementById('student-panel').style.display = 'none'; document.getElementById('main-system').style.display = 'block'; }
 
     function renderStudentSummary() {
-        const tbody = document.getElementById('studentSummaryBody');
-        tbody.innerHTML = '';
-        
-        const selKelas = document.getElementById('sFilterK').value;
-        const summary = {};
-        
+        const tbody = document.getElementById('studentSummaryBody'); tbody.innerHTML = '';
+        const selKelas = document.getElementById('sFilterK').value; const summary = {};
         masterData.forEach(r => {
             if (selKelas !== 'semua' && r.Kelas !== selKelas) return;
             const key = r['Nama Murid'] + "|||" + r.Kelas;
             if(!summary[key]) summary[key] = { nama: r['Nama Murid'], kelas: r.Kelas, count: 0 };
             summary[key].count++;
         });
-
         const sorted = Object.values(summary).sort((a,b) => b.count - a.count);
-        
-        if(sorted.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#888;">Tiada rekod data murid untuk tapisan ini.</td></tr>';
-            return;
-        }
-
+        if(sorted.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#888;">Tiada rekod data murid untuk tapisan ini.</td></tr>'; return; }
         sorted.forEach(s => {
-            tbody.innerHTML += `
-                <tr>
-                    <td style="text-align:left; padding-left:30px; font-weight:bold; color:var(--gov-blue);">${s.nama}</td>
-                    <td>${s.kelas}</td>
-                    <td><span class="badge-count">${s.count}</span></td>
-                    <td>
-                        <button class="btn-emoji" onclick="viewStdDetails('${s.nama}', '${s.kelas}')" title="Lihat Rekod Kesalahan">📋</button>
-                        <button class="btn-emoji" onclick="genStdPDF('${s.nama}', '${s.kelas}')" title="Muat Turun PDF Individu">🖨️</button>
-                    </td>
-                </tr>
-            `;
+            tbody.innerHTML += `<tr><td style="text-align:left; padding-left:30px; font-weight:bold; color:var(--gov-blue);">${s.nama}</td><td>${s.kelas}</td><td><span class="badge-count">${s.count}</span></td><td><button class="btn-emoji" onclick="viewStdDetails('${s.nama}', '${s.kelas}')" title="Lihat Rekod Kesalahan">📋</button><button class="btn-emoji" onclick="genStdPDF('${s.nama}', '${s.kelas}')" title="Muat Turun PDF Individu">🖨️</button></td></tr>`;
         });
     }
 
     function viewStdDetails(nama, kelas) {
         document.getElementById('detName').innerText = `Rekod Kesalahan: ${nama} (${kelas})`;
-        const tbody = document.getElementById('detBody');
-        tbody.innerHTML = '';
-        
+        const tbody = document.getElementById('detBody'); tbody.innerHTML = '';
         const records = masterData.filter(r => r['Nama Murid'] === nama && r.Kelas === kelas).reverse();
-        records.forEach((r, i) => {
-            tbody.innerHTML += `
-                <tr style="border-bottom:1px dashed #ddd;">
-                    <td style="padding:10px 5px; width:30px; font-weight:bold; color:var(--gov-gold);">${i+1}.</td>
-                    <td style="padding:10px 5px;"><b>${r.Tarikh}</b><br><span style="color:#555;">${r['Kategori Kes']} - ${r['Perincian Kes']}</span></td>
-                    <td style="padding:10px 5px; color:var(--danger-red); font-weight:500;">${r.Tindakan}</td>
-                </tr>
-            `;
-        });
+        records.forEach((r, i) => { tbody.innerHTML += `<tr style="border-bottom:1px dashed #ddd;"><td style="padding:10px 5px; width:30px; font-weight:bold; color:var(--gov-gold);">${i+1}.</td><td style="padding:10px 5px;"><b>${r.Tarikh}</b><br><span style="color:#555;">${r['Kategori Kes']} - ${r['Perincian Kes']}</span></td><td style="padding:10px 5px; color:var(--danger-red); font-weight:500;">${r.Tindakan}</td></tr>`; });
         document.getElementById('modalStdDetails').style.display = 'flex';
     }
 
     async function genStdPDF(nama, kelas) {
-        showLoader("MENJANA PDF INDIVIDU...");
-        const records = masterData.filter(r => r['Nama Murid'] === nama && r.Kelas === kelas).reverse();
-        
+        showLoader("MENJANA PDF INDIVIDU..."); const records = masterData.filter(r => r['Nama Murid'] === nama && r.Kelas === kelas).reverse();
         const { jsPDF } = window.jspdf; const doc = new jsPDF('p', 'mm', 'a4');
-        doc.setDrawColor(15, 38, 88); doc.setLineWidth(1.2); doc.rect(8, 8, 194, 281);
-        doc.setDrawColor(197, 160, 89); doc.setLineWidth(0.5); doc.rect(10, 10, 190, 277);
-        
-        const logo = new Image(); logo.src = "https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous";
-        await new Promise(res => logo.onload = res); doc.addImage(logo, 'PNG', 15, 15, 22, 22);
-        
+        doc.setDrawColor(15, 38, 88); doc.setLineWidth(1.2); doc.rect(8, 8, 194, 281); doc.setDrawColor(197, 160, 89); doc.setLineWidth(0.5); doc.rect(10, 10, 190, 277);
+        const logo = new Image(); logo.src = "https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous"; await new Promise(res => logo.onload = res); doc.addImage(logo, 'PNG', 15, 15, 22, 22);
         doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.text("SJK(C) CHIO CHIAO, SALAK", 105, 22, null, null, "center");
         doc.setFontSize(11); doc.text("LAPORAN INDIVIDU DISIPLIN MURID", 105, 32, null, null, "center");
-        
-        doc.setFontSize(10); doc.setFont("helvetica", "normal");
-        doc.text(`Nama Murid : ${nama}`, 15, 45);
-        doc.text(`Kelas : ${kelas}`, 15, 51);
-        doc.text(`Jumlah Rekod : ${records.length} Kes`, 15, 57);
-
-        const rows = records.map((r, i) =>[i+1, r.Tarikh, r['Kategori Kes'] + "\n(" + r['Perincian Kes'] + ")", r.Tindakan, r.Intervensi, r['Guru Merekod']]);
-        
-        doc.autoTable({ 
-            startY: 62, 
-            head: [['No.', 'Tarikh', 'Kesalahan', 'Tindakan', 'Intervensi', 'Guru']], 
-            body: rows, 
-            theme: 'grid', 
-            styles: { fontSize: 8 }, 
-            headStyles: { fillColor: [15, 38, 88], textColor:[197, 160, 89] } 
-        });
-
-        let fy = doc.lastAutoTable.finalY + 20;
-        if(fy > 230) { doc.addPage(); fy = 30; }
-        
+        doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text(`Nama Murid : ${nama}`, 15, 45); doc.text(`Kelas : ${kelas}`, 15, 51); doc.text(`Jumlah Rekod : ${records.length} Kes`, 15, 57);
+        const rows = records.map((r, i) => [i+1, r.Tarikh, r['Kategori Kes'] + "\n(" + r['Perincian Kes'] + ")", r.Tindakan, r.Intervensi, r['Guru Merekod']]);
+        doc.autoTable({ startY: 62, head: [['No.', 'Tarikh', 'Kesalahan', 'Tindakan', 'Intervensi', 'Guru']], body: rows, theme: 'grid', styles: { fontSize: 8 }, headStyles: { fillColor:[15, 38, 88], textColor:[197, 160, 89] } });
+        let fy = doc.lastAutoTable.finalY + 20; if(fy > 230) { doc.addPage(); fy = 30; }
         doc.line(20, fy, 90, fy); doc.text("(                                                                    )", 20, fy+8); doc.text("Ketua Guru Disiplin", 20, fy+15); doc.text("Tarikh: ________________", 20, fy+22);
         doc.line(120, fy, 190, fy); doc.text("(                                                                    )", 120, fy+8); doc.text("GPK HAL EHWAL MURID (HEM)", 120, fy+15); doc.text("Tarikh: ________________", 120, fy+22);
-
-        const pageCount = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) { doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("s.k.  Guru Besar", 15, 280); doc.text("      SJK(C) CHIO CHIAO", 15, 285); }
-
+        const pageCount = doc.internal.getNumberOfPages(); for (let i = 1; i <= pageCount; i++) { doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("s.k.  Guru Besar", 15, 280); doc.text("      SJK(C) CHIO CHIAO", 15, 285); }
         doc.save(`Laporan_Individu_${nama}.pdf`); hideLoader();
     }
 
@@ -566,10 +498,8 @@
         const r = masterData.find(x => x.ID.toString() === id.toString());
         showLoader("MENJANA PDF...");
         const { jsPDF } = window.jspdf; const doc = new jsPDF('p', 'mm', 'a4');
-        doc.setDrawColor(15, 38, 88); doc.setLineWidth(1.2); doc.rect(8, 8, 194, 281);
-        doc.setDrawColor(197, 160, 89); doc.setLineWidth(0.5); doc.rect(10, 10, 190, 277);
-        const logo = new Image(); logo.src = "https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous";
-        await new Promise(res => logo.onload = res); doc.addImage(logo, 'PNG', 15, 15, 22, 22);
+        doc.setDrawColor(15, 38, 88); doc.setLineWidth(1.2); doc.rect(8, 8, 194, 281); doc.setDrawColor(197, 160, 89); doc.setLineWidth(0.5); doc.rect(10, 10, 190, 277);
+        const logo = new Image(); logo.src = "https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous"; await new Promise(res => logo.onload = res); doc.addImage(logo, 'PNG', 15, 15, 22, 22);
         doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.text("SJK(C) CHIO CHIAO, SALAK", 105, 22, null, null, "center");
         doc.setFontSize(11); doc.text("LAPORAN REKOD DISIPLIN MURID", 105, 45, null, null, "center");
         doc.autoTable({ startY: 55, theme:'plain', styles:{fontSize:10, cellPadding:4}, body: [['Tarikh Kejadian',': '+r.Tarikh],['Nama Murid',': '+r['Nama Murid']],['Kelas',': '+r.Kelas],['Kategori Kes',': '+r['Kategori Kes']],['Perincian Kes',': '+r['Perincian Kes']],['Tindakan',': '+r.Tindakan],['Status Intervensi',': '+r.Intervensi],['Catatan Intervensi',': '+(r['Catatan Intervensi']||'Tiada')],['Guru Merekod',': '+r['Guru Merekod']]] });
@@ -603,7 +533,7 @@
         await new Promise(res => img.onload = res); doc.addImage(img, 'PNG', 15, 15, 22, 22);
         doc.setFont("helvetica", "bold"); doc.setFontSize(15); doc.text("SJK(C) CHIO CHIAO, SALAK", 148, 22, null, null, "center");
         doc.setFontSize(11); doc.text("LAPORAN UNIT DISIPLIN MURID", 148, 30, null, null, "center");
-        doc.autoTable({ startY: 40, head: [['Tarikh', 'Nama Murid', 'Kelas', 'Kategori', 'Perincian', 'Tindakan/Intv', 'Guru']], body: data.map(r => [r.Tarikh, r['Nama Murid'], r.Kelas, r['Kategori Kes'], r['Perincian Kes'], r.Tindakan + "\n" + r.Intervensi, r['Guru Merekod']]), theme: 'grid', styles: { fontSize: 9 }, headStyles: { fillColor:[15, 38, 88] } });
+        doc.autoTable({ startY: 40, head: [['Tarikh', 'Nama Murid', 'Kelas', 'Kategori', 'Perincian', 'Tindakan/Intv', 'Guru']], body: data.map(r => [r.Tarikh, r['Nama Murid'], r.Kelas, r['Kategori Kes'], r['Perincian Kes'], r.Tindakan + "\n" + r.Intervensi, r['Guru Merekod']]), theme: 'grid', styles: { fontSize: 9 }, headStyles: { fillColor: [15, 38, 88] } });
         let fy = doc.lastAutoTable.finalY + 25; if(fy > 170) { doc.addPage(); fy = 30; }
         doc.line(30, fy, 110, fy); doc.text("(                                                                    )", 70, fy+8, null, null, "center"); doc.text("Ketua Guru Disiplin", 70, fy+15, null, null, "center");
         doc.line(180, fy, 260, fy); doc.text("(                                                                    )", 220, fy+8, null, null, "center"); doc.text("GPK HAL EHWAL MURID (HEM)", 220, fy+15, null, null, "center");
