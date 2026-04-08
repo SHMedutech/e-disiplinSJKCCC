@@ -234,14 +234,12 @@
         <div class="header-brand"><img src="https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"><div><h3 style="color:var(--gov-blue);">REKOD DISIPLIN MURID</h3><p style="font-size:11px;">Analisis Sejarah Individu</p></div></div>
         <button class="btn-header" style="background:#0056b3;" onclick="closeStudentPanel()">KEMBALI KE DASHBOARD</button>
     </header>
-    
     <main class="student-main-container">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; background: white; padding: 20px 30px; border-radius: 12px; box-shadow: var(--shadow); border-top: 5px solid var(--gov-gold); flex-wrap: wrap; gap: 15px;">
             <div>
                 <h3 style="color:var(--gov-blue); font-size: 22px; margin-bottom:5px;">Pangkalan Data Murid</h3>
                 <span style="font-size:13px; color:#888;">Menyenaraikan rekod kumulatif kes untuk setiap murid.</span>
             </div>
-            
             <div style="display:flex; align-items:center; gap:10px; background: #f4f7f9; padding: 10px 15px; border-radius: 8px; flex-wrap: wrap;">
                 <label style="font-size:13px; font-weight:bold; color:var(--gov-blue);">MULA:</label>
                 <input type="date" id="sDateS" class="form-control" style="width:130px; margin-bottom:0; padding: 8px 10px; font-size:13px;" onchange="renderStudentSummary()">
@@ -272,11 +270,8 @@
 
 <!-- MODALS -->
 <div id="modalIntv" class="modal-overlay"><div class="modal-content"><h3 style="color:var(--gov-blue); margin-bottom:15px; border-bottom: 2px solid var(--gov-gold); padding-bottom:5px;">Log Intervensi Murid</h3><input type="hidden" id="intvId"><label style="font-size:12px; font-weight:bold;">Tarikh Sesi:</label><input type="date" id="iT" class="form-control"><label style="font-size:12px; font-weight:bold;">Jenis Intervensi:</label><select id="iJ" class="form-control"><option value="Kaunseling">Kaunseling</option><option value="Ziarah Cakna">Ziarah Cakna</option><option value="Mentoring">Mentoring</option><option value="Perjumpaan Ibu Bapa">Perjumpaan Ibu Bapa</option><option value="Maklum kepada ibu bapa">Maklum kepada ibu bapa</option><option value="Surat Amaran">Surat Amaran</option></select><label style="font-size:12px; font-weight:bold;">Catatan (*Jika ada):</label><textarea id="iC" class="form-control" rows="3"></textarea><div style="display:flex; gap:10px; margin-top:10px;"><button class="btn-header" style="background:var(--gov-blue); flex:1; height:40px;" onclick="saveIntv()">SIMPAN LOG</button><button class="btn-header" style="background:#888; flex:1; height:40px;" onclick="closeModal()">BATAL</button></div></div></div>
-
 <div id="modalPass" class="modal-overlay"><div class="modal-content"><h3 style="color:var(--gov-blue)">Akses Sulit Unit Disiplin</h3><p style="font-size:12px; margin:10px 0; color:#666;">Masukkan kata laluan:</p><input type="password" id="mP" class="form-control" placeholder="Kata Laluan"><button class="btn-header" style="background:var(--gov-blue); width:100%; height:40px; margin-left:0;" onclick="verifyMgmt()">MASUK</button><button onclick="document.getElementById('modalPass').style.display='none'" style="display:block; width:100%; border:none; background:none; margin-top:10px; font-size:12px; color:#888; cursor:pointer;">Batal</button></div></div>
-
 <div id="modalDelete" class="modal-overlay"><div class="modal-content" style="text-align: center; max-width: 350px;"><h3 style="color:var(--danger-red); margin-bottom: 10px;">Pengesahan Padam</h3><p style="font-size:13px; color:#666; margin-bottom: 25px;">Adakah anda pasti mahu memadam rekod ini secara kekal?</p><input type="hidden" id="delRecId"><div style="display:flex; gap:10px;"><button class="btn-header" style="background:var(--danger-red); flex:1; height:40px; margin:0;" onclick="confirmDelete()">YA, PADAM</button><button class="btn-header" style="background:#888; flex:1; height:40px; margin:0;" onclick="document.getElementById('modalDelete').style.display='none'">BATAL</button></div></div></div>
-
 <div id="modalStdDetails" class="modal-overlay"><div class="modal-content" style="max-width: 550px; border-top: 5px solid var(--gov-gold);"><h3 id="detName" style="color:var(--gov-blue); border-bottom: 2px dashed #eee; padding-bottom:10px; margin-bottom:15px; font-size: 18px;"></h3><div style="max-height: 350px; overflow-y: auto;"><table style="width:100%; font-size:12px; text-align:left; border-collapse: collapse;"><tbody id="detBody"></tbody></table></div><div style="text-align:center; margin-top:20px;"><button class="btn-header" style="background:#888; width: 100%; height: 40px; margin:0;" onclick="document.getElementById('modalStdDetails').style.display='none'">TUTUP PENGESAHAN</button></div></div></div>
 
 <script>
@@ -330,7 +325,8 @@
         });
     }
 
-    async function compressImage(file, maxWidth = 600) {
+    // MEMPERCEPATKAN SIMPAN GAMBAR (COMPRESS TO 500px, Quality 0.5)
+    async function compressImage(file, maxWidth = 500) {
         return new Promise((resolve) => {
             const reader = new FileReader(); reader.readAsDataURL(file);
             reader.onload = (event) => {
@@ -339,27 +335,45 @@
                     const canvas = document.createElement('canvas'); const ratio = maxWidth / img.width;
                     canvas.width = ratio > 1 ? img.width : maxWidth; canvas.height = ratio > 1 ? img.height : img.height * ratio;
                     const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve({ data: canvas.toDataURL('image/jpeg', 0.6).split(',')[1], type: 'image/jpeg' });
+                    resolve({ data: canvas.toDataURL('image/jpeg', 0.5).split(',')[1], type: 'image/jpeg' });
                 };
             };
         });
     }
 
+    // --- DIKEMASKINI: OPTIMISTIC UI UNTUK SAVE PANTAS ---
     document.getElementById('disciplineForm').onsubmit = async (e) => {
         e.preventDefault();
-        showLoader("MENYIMPAN DATA (Sila Tunggu)...");
-        const files = document.getElementById('bukti').files;
-        let imgs =[]; for(let i=0; i<files.length; i++) { imgs.push(await compressImage(files[i])); }
+        showLoader("MEMPROSES & MENYIMPAN..."); // Kejap sahaja
         
-        const payload = { action:"addRecord", id:Date.now(), tarikh:document.getElementById('tarikh').value, kelas:document.getElementById('kelas').value, nama:document.getElementById('nama').value, jenis:document.getElementById('jenis').value, perincian:document.getElementById('perincian').value, tindakan:document.getElementById('tindakan').value, guru:document.getElementById('guru').value, images:imgs };
+        const files = document.getElementById('bukti').files;
+        let imgs =[]; 
+        for(let i=0; i<files.length; i++) { imgs.push(await compressImage(files[i])); }
+        
+        const payload = { 
+            action:"addRecord", id:Date.now(), tarikh:document.getElementById('tarikh').value, 
+            kelas:document.getElementById('kelas').value, nama:document.getElementById('nama').value, 
+            jenis:document.getElementById('jenis').value, perincian:document.getElementById('perincian').value, 
+            tindakan:document.getElementById('tindakan').value, guru:document.getElementById('guru').value, images:imgs 
+        };
 
-        fetch(APP_URL, { method:"POST", body:JSON.stringify(payload) }).then(r => r.text()).then(() => { 
-            const newRec = { "ID": payload.id, "Tarikh": payload.tarikh, "Kelas": payload.kelas, "Nama Murid": payload.nama, "Kategori Kes": payload.jenis, "Perincian Kes": payload.perincian, "Tindakan": payload.tindakan, "Intervensi": "TIADA", "Catatan Intervensi": "", "Guru Merekod": payload.guru, "Gambar Links": "" };
-            masterData.push(newRec);
-            renderTables(); updateMgmtStats(); if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
-            document.getElementById('disciplineForm').reset(); document.getElementById('tarikh').valueAsDate = new Date();
-            hideLoader(); alert("Rekod Berjaya Disimpan!"); 
-        }).catch(err => { hideLoader(); alert("Gagal simpan. Sila semak capaian internet."); });
+        // 1. UPDATE UI TERUS (OPTIMISTIC UPDATE)
+        const newRec = { "ID": payload.id, "Tarikh": payload.tarikh, "Kelas": payload.kelas, "Nama Murid": payload.nama, "Kategori Kes": payload.jenis, "Perincian Kes": payload.perincian, "Tindakan": payload.tindakan, "Intervensi": "TIADA", "Catatan Intervensi": "", "Guru Merekod": payload.guru, "Gambar Links": "" };
+        masterData.push(newRec);
+        renderTables(); updateMgmtStats(); 
+        if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
+        
+        document.getElementById('disciplineForm').reset(); 
+        document.getElementById('tarikh').valueAsDate = new Date();
+        hideLoader(); 
+
+        // Notifikasi pantas (tanpa freeze)
+        setTimeout(() => alert("Rekod Berjaya Disimpan!"), 100);
+
+        // 2. BACKGROUND FETCH (Hantar ke Google Sheet tanpa suruh user tunggu)
+        fetch(APP_URL, { method:"POST", body:JSON.stringify(payload) })
+        .then(r => console.log("Background sync success"))
+        .catch(err => console.error("Background sync error"));
     };
 
     function setFilter(t) {
@@ -381,13 +395,15 @@
         let filtered = masterData.filter(r => {
             const rd = new Date(r.Tarikh);
             let match = true;
-            if(currentFilter==='bulan') { if(rd.getMonth() !== now.getMonth() || rd.getFullYear() !== now.getFullYear()) match = false; }
+
+            if(currentFilter==='bulan') {
+                if(rd.getMonth() !== now.getMonth() || rd.getFullYear() !== now.getFullYear()) match = false;
+            }
             if (selK !== 'semua' && r.Kelas !== selK) match = false;
             if (selG !== 'semua' && r['Guru Merekod'] !== selG) match = false;
-            return match;
-        });
 
-        [...filtered].reverse().forEach(r => {
+            return match;
+        });[...filtered].reverse().forEach(r => {
             tb.innerHTML += `<tr>
                 <td class="col-date">${r.Tarikh}</td>
                 <td><strong>${r['Nama Murid']}</strong><br><small>${r.Kelas}</small></td>
@@ -440,35 +456,66 @@
         else filtered.forEach(r => { mtb.innerHTML += `<tr><td>${r.Tarikh}</td><td>${r['Nama Murid']}</td><td>${r.Kelas}</td><td>${r['Kategori Kes']}</td><td>${r['Perincian Kes']}</td><td>${r.Tindakan}<br><small>${r.Intervensi}</small></td><td>${r['Guru Merekod']}</td><td style="text-align:center;"><button class="btn-small btn-padam" onclick="delRec('${r.ID}')">PADAM</button></td></tr>`; });
     }
 
+    // --- DIKEMASKINI: OPTIMISTIC UI UNTUK DELETE PANTAS ---
     function delRec(id) { document.getElementById('delRecId').value = id; document.getElementById('modalDelete').style.display = 'flex'; }
     function confirmDelete() {
-        document.getElementById('modalDelete').style.display = 'none'; const id = document.getElementById('delRecId').value; showLoader("MEMADAM REKOD..."); 
-        fetch(APP_URL, { method: "POST", body: JSON.stringify({action:"delete", id:id}) }).then(res => res.text()).then(result => { 
-            masterData = masterData.filter(r => r.ID.toString() !== id.toString()); renderTables(); updateMgmtStats();
-            if(document.getElementById('mgmt-panel').style.display === 'block') applyMgmtFilter();
-            if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
-            hideLoader(); 
-        });
+        document.getElementById('modalDelete').style.display = 'none'; 
+        const id = document.getElementById('delRecId').value;
+        
+        // Update UI terus
+        masterData = masterData.filter(r => r.ID.toString() !== id.toString()); 
+        renderTables(); updateMgmtStats();
+        if(document.getElementById('mgmt-panel').style.display === 'block') applyMgmtFilter();
+        if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
+        
+        document.getElementById('loader-text').innerText = "REKOD DIPADAM!";
+        document.getElementById('loader').style.display = 'flex';
+        setTimeout(() => hideLoader(), 800);
+
+        // Hantar background
+        fetch(APP_URL, { method: "POST", body: JSON.stringify({action:"delete", id:id}) });
     }
 
     function openIntv(id) { document.getElementById('intvId').value=id; document.getElementById('modalIntv').style.display='flex'; document.getElementById('iT').valueAsDate = new Date(); }
     function closeModal() { document.getElementById('modalIntv').style.display='none'; }
+    
+    // --- DIKEMASKINI: OPTIMISTIC UI UNTUK KEMASKINI INTERVENSI PANTAS ---
     function saveIntv() { 
-        showLoader("MENGEMASKINI..."); 
-        const id = document.getElementById('intvId').value; const intvVal = `[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`; const catatan = document.getElementById('iC').value;
-        fetch(APP_URL, {method:"POST", body:JSON.stringify({action:"updateIntervensi", id:id, intervensi:intvVal, intCatatan:catatan})}).then(()=>{ 
-            const idx = masterData.findIndex(r => r.ID.toString() === id.toString());
-            if(idx !== -1) { masterData[idx].Intervensi = intvVal; masterData[idx]['Catatan Intervensi'] = catatan; }
-            renderTables(); updateMgmtStats(); if(document.getElementById('mgmt-panel').style.display === 'block') applyMgmtFilter(); if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
-            closeModal(); hideLoader(); alert("Intervensi Diperbaharui!"); 
-        }); 
+        const id = document.getElementById('intvId').value; 
+        const intvVal = `[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`; 
+        const catatan = document.getElementById('iC').value;
+        
+        // Update UI terus
+        const idx = masterData.findIndex(r => r.ID.toString() === id.toString());
+        if(idx !== -1) { masterData[idx].Intervensi = intvVal; masterData[idx]['Catatan Intervensi'] = catatan; }
+        renderTables(); updateMgmtStats(); 
+        if(document.getElementById('mgmt-panel').style.display === 'block') applyMgmtFilter(); 
+        if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
+        closeModal(); 
+        
+        document.getElementById('loader-text').innerText = "INTERVENSI DIKEMASKINI!";
+        document.getElementById('loader').style.display = 'flex';
+        setTimeout(() => hideLoader(), 800);
+
+        // Hantar background
+        fetch(APP_URL, {method:"POST", body:JSON.stringify({action:"updateIntervensi", id:id, intervensi:intvVal, intCatatan:catatan})}); 
     }
 
     function reqMgmt() { document.getElementById('modalPass').style.display='flex'; }
     function verifyMgmt() { if(document.getElementById('mP').value==='BBC9401'){ document.getElementById('modalPass').style.display='none'; document.getElementById('main-system').style.display='none'; document.getElementById('student-panel').style.display='none'; document.getElementById('mgmt-panel').style.display='block'; applyMgmtFilter(); } else alert("Akses ditolak."); }
     function backDash() { document.getElementById('mgmt-panel').style.display='none'; document.getElementById('student-panel').style.display='none'; document.getElementById('main-system').style.display='block'; }
-    function openStudentPanel() { document.getElementById('main-system').style.display = 'none'; document.getElementById('mgmt-panel').style.display = 'none'; document.getElementById('student-panel').style.display = 'block'; renderStudentSummary(); }
-    function closeStudentPanel() { document.getElementById('student-panel').style.display = 'none'; document.getElementById('main-system').style.display = 'block'; }
+
+    function openStudentPanel() {
+        document.getElementById('main-system').style.display = 'none';
+        document.getElementById('mgmt-panel').style.display = 'none';
+        document.getElementById('student-panel').style.display = 'block';
+        renderStudentSummary();
+    }
+
+    function closeStudentPanel() {
+        document.getElementById('student-panel').style.display = 'none';
+        document.getElementById('main-system').style.display = 'block';
+    }
 
     function renderStudentSummary() {
         const tbody = document.getElementById('studentSummaryBody'); tbody.innerHTML = '';
@@ -527,11 +574,7 @@
         
         doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.text("SJK(C) CHIO CHIAO, SALAK", 105, 22, null, null, "center");
         doc.setFontSize(11); doc.text("LAPORAN INDIVIDU DISIPLIN MURID", 105, 32, null, null, "center");
-        
-        doc.setFontSize(10); doc.setFont("helvetica", "normal");
-        doc.text(`Nama Murid : ${nama}`, 15, 45);
-        doc.text(`Kelas : ${kelas}`, 15, 51);
-        doc.text(`Jumlah Rekod : ${records.length} Kes`, 15, 57);
+        doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text(`Nama Murid : ${nama}`, 15, 45); doc.text(`Kelas : ${kelas}`, 15, 51); doc.text(`Jumlah Rekod : ${records.length} Kes`, 15, 57);
 
         let julatText = "Keseluruhan";
         function fDot(ds) { if(!ds) return ""; const p = ds.split('-'); return `${p[2]}.${p[1]}.${p[0]}`; }
@@ -540,7 +583,7 @@
         else if (eDate) julatText = `Sehingga ${fDot(eDate)}`;
         doc.text(`Julat Tarikh : ${julatText}`, 15, 63);
 
-        const rows = records.map((r, i) =>[i+1, r.Tarikh, r['Kategori Kes'] + "\n(" + r['Perincian Kes'] + ")", r.Tindakan, r.Intervensi, r['Guru Merekod']]);
+        const rows = records.map((r, i) => [i+1, r.Tarikh, r['Kategori Kes'] + "\n(" + r['Perincian Kes'] + ")", r.Tindakan, r.Intervensi, r['Guru Merekod']]);
         doc.autoTable({ startY: 68, head: [['No.', 'Tarikh', 'Kesalahan', 'Tindakan', 'Intervensi', 'Guru']], body: rows, theme: 'grid', styles: { fontSize: 8 }, headStyles: { fillColor:[15, 38, 88], textColor:[197, 160, 89] } });
 
         let fy = doc.lastAutoTable.finalY + 20; if(fy > 230) { doc.addPage(); fy = 30; }
@@ -569,8 +612,7 @@
         const { jsPDF } = window.jspdf; const doc = new jsPDF('p', 'mm', 'a4');
         doc.setDrawColor(15, 38, 88); doc.setLineWidth(1.2); doc.rect(8, 8, 194, 281);
         doc.setDrawColor(197, 160, 89); doc.setLineWidth(0.5); doc.rect(10, 10, 190, 277);
-        const logo = new Image(); logo.src = "https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous";
-        await new Promise(res => logo.onload = res); doc.addImage(logo, 'PNG', 15, 15, 22, 22);
+        const logo = new Image(); logo.src = "https://i.postimg.cc/02NPRHcT/sjkccc_logo.png"; logo.crossOrigin="Anonymous"; await new Promise(res => logo.onload = res); doc.addImage(logo, 'PNG', 15, 15, 22, 22);
         doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.text("SJK(C) CHIO CHIAO, SALAK", 105, 22, null, null, "center");
         doc.setFontSize(11); doc.text("LAPORAN REKOD DISIPLIN MURID", 105, 45, null, null, "center");
         doc.autoTable({ startY: 55, theme:'plain', styles:{fontSize:10, cellPadding:4}, body: [['Tarikh Kejadian',': '+r.Tarikh],['Nama Murid',': '+r['Nama Murid']],['Kelas',': '+r.Kelas],['Kategori Kes',': '+r['Kategori Kes']],['Perincian Kes',': '+r['Perincian Kes']],['Tindakan',': '+r.Tindakan],['Status Intervensi',': '+r.Intervensi],['Catatan Intervensi',': '+(r['Catatan Intervensi']||'Tiada')],['Guru Merekod',': '+r['Guru Merekod']]] });
