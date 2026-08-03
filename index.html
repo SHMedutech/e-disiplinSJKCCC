@@ -139,7 +139,8 @@
                 <select id="tindakan" class="form-control" required><option value="">-- TINDAKAN --</option></select>
                 
                 <label style="font-size:11px; font-weight:bold;">Keterangan Tambahan / Kronologi Kes:</label>
-                <textarea id="keterangan" class="form-control" placeholder="Tulis huraian ringkas tentang kesalahan murid di sini..." rows="4" style="resize: none;"></textarea>
+                <!-- DITAMBAH: text-transform: uppercase -->
+                <textarea id="keterangan" class="form-control" placeholder="TULIS HURAIAN RINGKAS TENTANG KESALAHAN MURID DI SINI..." rows="4" style="resize: none; text-transform: uppercase;"></textarea>
                 
                 <select id="guru" class="form-control" required><option value="">-- GURU MELAPOR --</option></select>
                 <label style="font-size:11px; font-weight:bold;">Muatnaik Bukti Gambar:</label>
@@ -291,7 +292,7 @@
 </div>
 
 <!-- MODALS -->
-<div id="modalIntv" class="modal-overlay"><div class="modal-content"><h3 style="color:var(--gov-blue); margin-bottom:15px; border-bottom: 2px solid var(--gov-gold); padding-bottom:5px;">Log Intervensi Murid</h3><input type="hidden" id="intvId"><label style="font-size:12px; font-weight:bold;">Tarikh Sesi:</label><input type="date" id="iT" class="form-control"><label style="font-size:12px; font-weight:bold;">Jenis Intervensi:</label><select id="iJ" class="form-control"><option value="Kaunseling">Kaunseling</option><option value="Ziarah Cakna">Ziarah Cakna</option><option value="Mentoring">Mentoring</option><option value="Perjumpaan Ibu Bapa">Perjumpaan Ibu Bapa</option><option value="Maklum kepada ibu bapa">Maklum kepada ibu bapa</option><option value="Surat Amaran">Surat Amaran</option></select><label style="font-size:12px; font-weight:bold;">Catatan (*Jika ada):</label><textarea id="iC" class="form-control" rows="3"></textarea><div style="display:flex; gap:10px; margin-top:10px;"><button class="btn-header" style="background:var(--gov-blue); flex:1; height:40px;" onclick="saveIntv()">SIMPAN LOG</button><button class="btn-header" style="background:#888; flex:1; height:40px;" onclick="closeModal()">BATAL</button></div></div></div>
+<div id="modalIntv" class="modal-overlay"><div class="modal-content"><h3 style="color:var(--gov-blue); margin-bottom:15px; border-bottom: 2px solid var(--gov-gold); padding-bottom:5px;">Log Intervensi Murid</h3><input type="hidden" id="intvId"><label style="font-size:12px; font-weight:bold;">Tarikh Sesi:</label><input type="date" id="iT" class="form-control"><label style="font-size:12px; font-weight:bold;">Jenis Intervensi:</label><select id="iJ" class="form-control"><option value="Kaunseling">Kaunseling</option><option value="Ziarah Cakna">Ziarah Cakna</option><option value="Mentoring">Mentoring</option><option value="Perjumpaan Ibu Bapa">Perjumpaan Ibu Bapa</option><option value="Maklum kepada ibu bapa">Maklum kepada ibu bapa</option><option value="Surat Amaran">Surat Amaran</option></select><label style="font-size:12px; font-weight:bold;">Catatan (*Jika ada):</label><textarea id="iC" class="form-control" rows="3" style="text-transform: uppercase;"></textarea><div style="display:flex; gap:10px; margin-top:10px;"><button class="btn-header" style="background:var(--gov-blue); flex:1; height:40px;" onclick="saveIntv()">SIMPAN LOG</button><button class="btn-header" style="background:#888; flex:1; height:40px;" onclick="closeModal()">BATAL</button></div></div></div>
 
 <div id="modalPass" class="modal-overlay"><div class="modal-content"><h3 style="color:var(--gov-blue)">Akses Sulit Unit Disiplin</h3><p style="font-size:12px; margin:10px 0; color:#666;">Masukkan kata laluan:</p><input type="password" id="mP" class="form-control" placeholder="Kata Laluan"><button class="btn-header" style="background:var(--gov-blue); width:100%; height:40px; margin-left:0;" onclick="verifyMgmt()">MASUK</button><button onclick="document.getElementById('modalPass').style.display='none'" style="display:block; width:100%; border:none; background:none; margin-top:10px; font-size:12px; color:#888; cursor:pointer;">Batal</button></div></div>
 
@@ -378,7 +379,7 @@
             kelas:document.getElementById('kelas').value, nama:document.getElementById('nama').value, 
             jenis:document.getElementById('jenis').value, perincian:document.getElementById('perincian').value, 
             tindakan:document.getElementById('tindakan').value, 
-            keterangan:document.getElementById('keterangan').value, 
+            keterangan:document.getElementById('keterangan').value.toUpperCase(), // TUKAR KE HURUF BESAR SEBELUM SIMPAN
             guru:document.getElementById('guru').value, images:imgs 
         };
 
@@ -514,7 +515,7 @@
     function saveIntv() { 
         const id = document.getElementById('intvId').value; 
         const intvVal = `[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`; 
-        const catatan = document.getElementById('iC').value;
+        const catatan = document.getElementById('iC').value.toUpperCase(); // TUKAR KEPADA HURUF BESAR
         
         const idx = masterData.findIndex(r => r.ID.toString() === id.toString());
         if(idx !== -1) { masterData[idx].Intervensi = intvVal; masterData[idx]['Catatan Intervensi'] = catatan; }
