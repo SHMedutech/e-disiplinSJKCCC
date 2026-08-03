@@ -385,7 +385,7 @@
         const newRec = { 
             "ID": payload.id, "Tarikh": payload.tarikh, "Kelas": payload.kelas, "Nama Murid": payload.nama, 
             "Kategori Kes": payload.jenis, "Perincian Kes": payload.perincian, "Tindakan": payload.tindakan, 
-            "Keterangan": payload.keterangan, 
+            "Keterangan Tambahan / Kronologi Kes": payload.keterangan, 
             "Intervensi": "TIADA", "Catatan Intervensi": "", "Guru Merekod": payload.guru, "Gambar Links": "" 
         };
         
@@ -487,7 +487,7 @@
                 <td>${r.Kelas}</td>
                 <td>${r['Kategori Kes']}</td>
                 <td>${r['Perincian Kes']}</td>
-                <td>${(r.Keterangan || '-')}</td>
+                <td>${(r['Keterangan Tambahan / Kronologi Kes'] || '-')}</td>
                 <td>${r.Tindakan}<br><small>${r.Intervensi}</small></td>
                 <td>${r['Guru Merekod']}</td>
                 <td style="text-align:center;"><button class="btn-small btn-padam" onclick="delRec('${r.ID}')">PADAM</button></td>
@@ -655,7 +655,7 @@
                 ['Kategori Kes',': '+r['Kategori Kes']],
                 ['Perincian Kes',': '+r['Perincian Kes']],
                 ['Tindakan',': '+r.Tindakan],
-                ['Keterangan/Kronologi',': '+(r.Keterangan || 'Tiada')],
+                ['Keterangan/Kronologi',': '+(r['Keterangan Tambahan / Kronologi Kes'] || 'Tiada')],
                 ['Status Intervensi',': '+r.Intervensi],
                 ['Catatan Intervensi',': '+(r['Catatan Intervensi']||'Tiada')],
                 ['Guru Merekod',': '+r['Guru Merekod']]
@@ -709,7 +709,7 @@
             r.Kelas, 
             r['Kategori Kes'], 
             r['Perincian Kes'], 
-            (r.Keterangan || '-'), 
+            (r['Keterangan Tambahan / Kronologi Kes'] || '-'), 
             r.Tindakan + "\n" + r.Intervensi, 
             r['Guru Merekod']
         ]);
