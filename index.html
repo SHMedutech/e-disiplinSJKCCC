@@ -139,7 +139,6 @@
                 <select id="tindakan" class="form-control" required><option value="">-- TINDAKAN --</option></select>
                 
                 <label style="font-size:11px; font-weight:bold;">Keterangan Tambahan / Kronologi Kes:</label>
-                <!-- DITAMBAH: text-transform: uppercase -->
                 <textarea id="keterangan" class="form-control" placeholder="TULIS HURAIAN RINGKAS TENTANG KESALAHAN MURID DI SINI..." rows="4" style="resize: none; text-transform: uppercase;"></textarea>
                 
                 <select id="guru" class="form-control" required><option value="">-- GURU MELAPOR --</option></select>
@@ -386,7 +385,7 @@
         const newRec = { 
             "ID": payload.id, "Tarikh": payload.tarikh, "Kelas": payload.kelas, "Nama Murid": payload.nama, 
             "Kategori Kes": payload.jenis, "Perincian Kes": payload.perincian, "Tindakan": payload.tindakan, 
-            "Keterangan Tambahan / Kronologi Kes": payload.keterangan, 
+            "Keterangan Tambahan / Kronologi Kes": payload.keterangan, // NAMA HEADER BARU
             "Intervensi": "TIADA", "Catatan Intervensi": "", "Guru Merekod": payload.guru, "Gambar Links": "" 
         };
         
@@ -482,13 +481,14 @@
         }).reverse(); 
         if(filtered.length === 0) mtb.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:30px; color:#888;">Tiada rekod dijumpai</td></tr>';
         else filtered.forEach(r => { 
+            const ket = r['Keterangan Tambahan / Kronologi Kes'] || '-';
             mtb.innerHTML += `<tr>
                 <td>${r.Tarikh}</td>
                 <td>${r['Nama Murid']}</td>
                 <td>${r.Kelas}</td>
                 <td>${r['Kategori Kes']}</td>
-                <td>${r['Perincian Kes']}</td>
-                <td>${(r['Keterangan Tambahan / Kronologi Kes'] || '-')}</td>
+                <td>${r['Perincian Kes'] || r['Perincian Kesalahan']}</td>
+                <td>${ket}</td>
                 <td>${r.Tindakan}<br><small>${r.Intervensi}</small></td>
                 <td>${r['Guru Merekod']}</td>
                 <td style="text-align:center;"><button class="btn-small btn-padam" onclick="delRec('${r.ID}')">PADAM</button></td>
@@ -582,7 +582,7 @@
             return true;
         }).reverse();
 
-        records.forEach((r, i) => { tbody.innerHTML += `<tr style="border-bottom:1px dashed #ddd;"><td style="padding:10px 5px; width:30px; font-weight:bold; color:var(--gov-gold);">${i+1}.</td><td style="padding:10px 5px;"><b>${r.Tarikh}</b><br><span style="color:#555;">${r['Kategori Kes']} - ${r['Perincian Kes']}</span></td><td style="padding:10px 5px; color:var(--danger-red); font-weight:500;">${r.Tindakan}</td></tr>`; });
+        records.forEach((r, i) => { tbody.innerHTML += `<tr style="border-bottom:1px dashed #ddd;"><td style="padding:10px 5px; width:30px; font-weight:bold; color:var(--gov-gold);">${i+1}.</td><td style="padding:10px 5px;"><b>${r.Tarikh}</b><br><span style="color:#555;">${r['Kategori Kes']} - ${r['Perincian Kes'] || r['Perincian Kesalahan']}</span></td><td style="padding:10px 5px; color:var(--danger-red); font-weight:500;">${r.Tindakan}</td></tr>`; });
         document.getElementById('modalStdDetails').style.display = 'flex';
     }
 
@@ -612,7 +612,7 @@
         else if (eDate) julatText = `Sehingga ${fDot(eDate)}`;
         doc.text(`Julat Tarikh : ${julatText}`, 15, 63);
 
-        const rows = records.map((r, i) => [i+1, r.Tarikh, r['Kategori Kes'] + "\n(" + r['Perincian Kes'] + ")", r.Tindakan, r.Intervensi, r['Guru Merekod']]);
+        const rows = records.map((r, i) => [i+1, r.Tarikh, r['Kategori Kes'] + "\n(" + (r['Perincian Kes'] || r['Perincian Kesalahan']) + ")", r.Tindakan, r.Intervensi, r['Guru Merekod']]);
         doc.autoTable({ startY: 68, head: [['No.', 'Tarikh', 'Kesalahan', 'Tindakan', 'Intervensi', 'Guru']], body: rows, theme: 'grid', styles: { fontSize: 8 }, headStyles: { fillColor:[15, 38, 88], textColor:[197, 160, 89] } });
 
         let fy = doc.lastAutoTable.finalY + 20; if(fy > 230) { doc.addPage(); fy = 30; }
@@ -645,6 +645,7 @@
         doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.text("SJK(C) CHIO CHIAO, SALAK", 105, 22, null, null, "center");
         doc.setFontSize(11); doc.text("LAPORAN REKOD DISIPLIN MURID", 105, 45, null, null, "center");
         
+        const ket = r['Keterangan Tambahan / Kronologi Kes'] || 'Tiada';
         doc.autoTable({ 
             startY: 55, 
             theme:'plain', 
@@ -654,9 +655,9 @@
                 ['Nama Murid',': '+r['Nama Murid']],
                 ['Kelas',': '+r.Kelas],
                 ['Kategori Kes',': '+r['Kategori Kes']],
-                ['Perincian Kes',': '+r['Perincian Kes']],
+                ['Perincian Kes',': '+(r['Perincian Kes'] || r['Perincian Kesalahan'])],
                 ['Tindakan',': '+r.Tindakan],
-                ['Keterangan/Kronologi',': '+(r['Keterangan Tambahan / Kronologi Kes'] || 'Tiada')],
+                ['Keterangan/Kronologi',': '+ket],
                 ['Status Intervensi',': '+r.Intervensi],
                 ['Catatan Intervensi',': '+(r['Catatan Intervensi']||'Tiada')],
                 ['Guru Merekod',': '+r['Guru Merekod']]
@@ -704,20 +705,23 @@
         doc.setFont("helvetica", "bold"); doc.setFontSize(15); doc.text("SJK(C) CHIO CHIAO, SALAK", 148, 22, null, null, "center");
         doc.setFontSize(11); doc.text(title.toUpperCase(), 148, 30, null, null, "center");
         
-        const rows = data.map(r =>[
-            r.Tarikh, 
-            r['Nama Murid'], 
-            r.Kelas, 
-            r['Kategori Kes'], 
-            r['Perincian Kes'], 
-            (r['Keterangan Tambahan / Kronologi Kes'] || '-'), 
-            r.Tindakan + "\n" + r.Intervensi, 
-            r['Guru Merekod']
-        ]);
+        const rows = data.map(r => {
+            const ket = r['Keterangan Tambahan / Kronologi Kes'] || '-';
+            return [
+                r.Tarikh, 
+                r['Nama Murid'], 
+                r.Kelas, 
+                r['Kategori Kes'], 
+                (r['Perincian Kes'] || r['Perincian Kesalahan']), 
+                ket, 
+                r.Tindakan + "\n" + r.Intervensi, 
+                r['Guru Merekod']
+            ];
+        });
 
         doc.autoTable({ 
             startY: 40, 
-            head: [['Tarikh', 'Nama Murid', 'Kelas', 'Kategori Kes', 'Perincian', 'Kronologi', 'Tindakan/Intv', 'Guru']], 
+            head: [['Tarikh', 'Nama Murid', 'Kelas', 'Kategori Kes', 'Perincian', 'Keterangan/Kronologi Kes', 'Tindakan/Intv', 'Guru']], 
             body: rows, 
             theme: 'grid', 
             styles: { fontSize: 8, overflow: 'linebreak' }, 
