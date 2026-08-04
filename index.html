@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
         :root { --gov-blue: #0f2658; --gov-gold: #c5a059; --danger-red: #dc3545; --light-bg: #f4f7f9; --white: #ffffff; --shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -67,15 +68,18 @@
         .item-pill b { background: rgba(255,255,255,0.25); padding: 2px 6px; border-radius: 4px; margin-left: 10px; font-size: 14px; }
         #mgmtTable { table-layout: auto; min-width: 1200px; }
         #mgmtTable th, #mgmtTable td { white-space: nowrap; vertical-align: middle; }
-        /* Middle columns with text wrapping */
-        #mgmtTable td:nth-child(5), 
-        #mgmtTable td:nth-child(6), 
-        #mgmtTable td:nth-child(7) { 
-            white-space: normal; 
-            min-width: 180px; 
-            font-size: 11px;
-        }
+        #mgmtTable td:nth-child(5), #mgmtTable td:nth-child(6), #mgmtTable td:nth-child(7) { white-space: normal; min-width: 180px; font-size: 11px; }
         .mgmt-main-container { padding: 25px 5%; margin-top: 90px; }
+
+        /* MULTI-SELECT CHECKBOX DROPDOWN CSS */
+        .dropdown-check-list { display: inline-block; position: relative; margin-bottom: 0; outline: none;}
+        .dropdown-check-list .anchor { position: relative; cursor: pointer; display: inline-block; padding: 8px 30px 8px 10px; border: 1px solid #ced4da; border-radius: 6px; background: white; font-size: 13px; width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dropdown-check-list .anchor::after { position: absolute; content: ""; border-left: 2px solid #555; border-bottom: 2px solid #555; padding: 3px; right: 12px; top: 40%; transform: translateY(-50%) rotate(-45deg); }
+        .dropdown-check-list .items { padding: 8px; display: none; position: absolute; background: white; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 280px; max-height: 250px; overflow-y: auto; z-index: 1000; list-style: none; left: 0; top: 100%; margin-top: 5px; }
+        .dropdown-check-list.visible .items { display: block; }
+        .dropdown-check-list .items li { margin-bottom: 6px; font-size: 12px; display: flex; align-items: flex-start; gap: 8px; cursor: pointer; }
+        .dropdown-check-list .items input[type="checkbox"] { cursor: pointer; margin-top: 2px; }
+        .dropdown-check-list .items label { cursor: pointer; display: block; width: 100%; line-height: 1.3; }
 
         /* 4. PANEL REKOD MURID */
         .student-main-container { padding: 25px 2.5%; margin-top: 90px; } 
@@ -90,7 +94,7 @@
 
         /* MODALS */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: white; width: 90%; max-width: 450px; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .modal-content { background: white; width: 90%; max-width: 600px; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
         
         #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; color: var(--gov-blue); }
         .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--gov-blue); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
@@ -102,6 +106,114 @@
 <body>
 
 <div id="loader"><div class="spinner"></div><p id="loader-text">MEMPROSES DATA...</p></div>
+
+<!-- HIDDEN HTML TEMPLATE FOR MEMO PDF (Auto One-Page Design) -->
+<div id="memo-print-area" style="position: absolute; left: -9999px; top: 0; width: 794px; height: 1123px; display: block; background: white; padding: 50px 60px; box-sizing: border-box; font-family: Arial, 'Microsoft YaHei', sans-serif; color: #000; line-height: 1.4;">
+    
+    <!-- Header Mengikut Format Imej (Nisbah Aspek Logo Dipelihara) -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px;">
+        <img id="memo-logo1" src="" style="height: 75px; max-width: 100px; object-fit: contain; display: block;">
+        <div style="text-align: center; flex: 1; padding: 0 10px;">
+            <h1 style="font-size: 20px; margin: 0; font-weight: bold; letter-spacing: 1px;">沙叻觉侨国民型华文学校</h1>
+            <h2 style="font-size: 13px; margin: 3px 0 6px; font-weight: bold;">SEKOLAH JENIS KEBANGSAAN (CINA) CHIO CHIAO</h2>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; padding: 0 10px;">
+                <div style="text-align: left; font-weight: bold; line-height: 1.2;">
+                    PEKAN SALAK, 43900 SEPANG,<br>SELANGOR DARUL EHSAN.
+                </div>
+                <div style="text-align: left; font-weight: bold; line-height: 1.2;">
+                    Tel / Faks : 603-8706 1970<br>Emel:BBC9401@moe.edu.my
+                </div>
+            </div>
+        </div>
+        <img id="memo-logo2" src="" style="height: 75px; max-width: 100px; object-fit: contain; display: block;">
+    </div>
+
+    <!-- Body Content (Font 11px) -->
+    <div style="font-size: 11px;">
+        <p style="font-weight: bold; margin-bottom: 2px;">Kepada / 致：</p>
+        <p style="margin-top: 0; margin-bottom: 12px;">Ibu Bapa / Penjaga kepada:<br>家长 / 监护人：<br>
+        <strong id="memo-val-name-top" style="font-size:12px;"></strong><br>
+        (Kelas: <span id="memo-val-class-top"></span>)</p>
+
+        <div style="text-align: center; margin: 10px 0;">
+            <h3 style="font-size: 14px; margin: 0; text-decoration: underline;">MEMO SALAH LAKU KES DISIPLIN</h3>
+            <h3 style="font-size: 14px; margin: 2px 0 0; text-decoration: underline;">纪律事项通知备忘录</h3>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px;">
+            <tr>
+                <td style="width: 30%; padding: 5px; border: 1px solid #000; font-weight: bold;">Nama Murid / 学生姓名</td>
+                <td style="padding: 5px; border: 1px solid #000;" id="memo-val-name"></td>
+            </tr>
+            <tr>
+                <td style="padding: 5px; border: 1px solid #000; font-weight: bold;">Kelas / 班级</td>
+                <td style="padding: 5px; border: 1px solid #000;" id="memo-val-class"></td>
+            </tr>
+            <tr>
+                <td style="padding: 5px; border: 1px solid #000; font-weight: bold;">Kesalahan / 违规事项</td>
+                <td style="padding: 5px; border: 1px solid #000;" id="memo-val-kes"></td>
+            </tr>
+            <tr>
+                <td style="padding: 5px; border: 1px solid #000; font-weight: bold;">Tarikh Direkodkan / 记录日期</td>
+                <td style="padding: 5px; border: 1px solid #000;" id="memo-val-dates"></td>
+            </tr>
+            <tr>
+                <td style="padding: 5px; border: 1px solid #000; font-weight: bold;">Kekerapan / 违规次数</td>
+                <td style="padding: 5px; border: 1px solid #000;" id="memo-val-freq"></td>
+            </tr>
+        </table>
+
+        <!-- Pengesahan Murid -->
+        <h4 style="margin: 0 0 2px; font-size: 11px; font-weight: bold;">Pengesahan Murid / 学生确认</h4>
+        <p style="margin: 0 0 2px;">Saya __________________________________________ dengan ini mengesahkan bahawa saya telah menerima dan memahami makluman berkaitan kes disiplin tersebut. Saya akan berusaha sedaya upaya untuk mematuhi peraturan sekolah.</p>
+        <p style="margin: 2px 0 8px;">本人 __________________________________________ 确认已收到并了解有关上述纪律事项的通知。本人将尽力遵守学校规则，并在未来改进自己的行为。</p>
+        
+        <p style="margin: 0 0 2px;">......................................................</p>
+        <p style="margin: 0 0 10px; font-weight: bold;">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
+
+        <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
+
+        <!-- Pengesahan Ibu Bapa -->
+        <h4 style="margin: 0 0 2px; font-size: 11px; font-weight: bold;">Pengesahan Ibu Bapa / Waris</h4>
+        <h4 style="margin: 0 0 2px; font-size: 11px; font-weight: bold;">家长 / 监护人确认</h4>
+        
+        <p style="margin: 4px 0 2px;">Saya ___________________________________________ dengan ini mengesahkan bahawa saya telah menerima makluman berkaitan kes disiplin anak saya <strong id="memo-val-name2"></strong>, Tahun <strong id="memo-val-class2"></strong> dan akan memberikan perhatian serta mengambil tindakan yang sewajarnya.</p>
+
+        <p style="margin: 4px 0 10px;">本人 ___________________________________________ 确认已收到有关孩子 <strong id="memo-val-name3"></strong>（年级：<strong id="memo-val-class3"></strong>）纪律事项的通知，并将给予关注及采取适当的跟进措施。</p>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px;">
+            <div>
+                <p style="margin: 0 0 2px;">......................................................</p>
+                <p style="margin: 0; font-weight: bold;">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
+            </div>
+            <div>
+                <p style="margin: 0; font-weight: bold;">Tarikh / 日期：_________________</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Absolute Bottom Section (Locks Footer to A4 Bottom) -->
+    <div style="position: absolute; bottom: 50px; left: 60px; right: 60px;">
+        <hr style="border: 0; border-top: 1px solid #ccc; margin-bottom: 12px;">
+        
+        <!-- Nota -->
+        <h4 style="margin: 0 0 2px; font-size: 11px; font-weight: bold;">Nota / 备注</h4>
+        <p style="margin: 0 0 2px; font-style: italic; font-size: 10px;">*Memo ini WAJIB dikembalikan kepada pihak sekolah dalam tempoh selewat-lewatnya 3 hari daripada tarikh surat diberikan.</p>
+        <p style="margin: 0 0 15px; font-style: italic; font-size: 10px;">*此备忘录必须在发出日期起最迟3天内交回学校。</p>
+
+        <!-- GPK HEM Signature -->
+        <div style="margin-bottom: 15px;">
+            <p style="margin: 0; font-size: 11px;">Yang menjalankan amanah,</p>
+            <br><br>
+            <p style="margin: 0; font-size: 11px;">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
+            <p style="margin: 0; font-weight: bold; font-size: 11px;">GPK Hal Ehwal Murid</p>
+            <p style="margin: 0; font-size: 11px;">SJK(C) CHIO CHIAO</p>
+        </div>
+
+        <!-- SK -->
+        <p style="margin: 0; font-size: 10px; font-weight: bold;">s.k: Guru Besar SJK(C) CHIO CHIAO</p>
+    </div>
+</div>
 
 <!-- 1. LOGIN SCREEN -->
 <div id="login-screen">
@@ -265,12 +377,21 @@
             <div style="display:flex; align-items:center; gap:10px; background: #f4f7f9; padding: 10px 15px; border-radius: 8px; flex-wrap: wrap;">
                 <label style="font-size:13px; font-weight:bold; color:var(--gov-blue);">MULA:</label>
                 <input type="date" id="sDateS" class="form-control" style="width:130px; margin-bottom:0; padding: 8px 10px; font-size:13px;" onchange="renderStudentSummary()">
+                
                 <label style="font-size:13px; font-weight:bold; color:var(--gov-blue);">TAMAT:</label>
                 <input type="date" id="sDateE" class="form-control" style="width:130px; margin-bottom:0; padding: 8px 10px; font-size:13px;" onchange="renderStudentSummary()">
+                
                 <label style="font-size:13px; font-weight:bold; color:var(--gov-blue);">KELAS:</label>
                 <select id="sFilterK" class="form-control" style="width:120px; margin-bottom:0; padding: 8px 10px; font-size:13px;" onchange="renderStudentSummary()">
                     <option value="semua">Semua Kelas</option>
                 </select>
+
+                <!-- FILTER PERINCIAN (MULTI-SELECT CHECKBOX) -->
+                <label style="font-size:13px; font-weight:bold; color:var(--gov-blue);">PERINCIAN:</label>
+                <div id="multiSelectContainer" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor">-- Pilih Kesalahan --</span>
+                    <ul class="items" id="sFilterP"></ul>
+                </div>
             </div>
         </div>
 
@@ -278,10 +399,10 @@
             <table class="cute-table">
                 <thead>
                     <tr>
-                        <th style="text-align:left; padding-left:30px; width:35%;">Nama Murid</th>
+                        <th style="text-align:left; padding-left:30px; width:40%;">Nama Murid</th>
                         <th style="width:15%;">Kelas</th>
-                        <th style="width:25%;">Jumlah Rekod Kesalahan</th>
-                        <th style="width:25%;">Perincian / PDF</th>
+                        <th style="width:20%;">Jumlah Rekod Kesalahan</th>
+                        <th style="width:25%;">Tindakan / Laporan / Memo</th>
                     </tr>
                 </thead>
                 <tbody id="studentSummaryBody"></tbody>
@@ -297,7 +418,7 @@
 
 <div id="modalDelete" class="modal-overlay"><div class="modal-content" style="text-align: center; max-width: 350px;"><h3 style="color:var(--danger-red); margin-bottom: 10px;">Pengesahan Padam</h3><p style="font-size:13px; color:#666; margin-bottom: 25px;">Adakah anda pasti mahu memadam rekod ini secara kekal?</p><input type="hidden" id="delRecId"><div style="display:flex; gap:10px;"><button class="btn-header" style="background:var(--danger-red); flex:1; height:40px; margin:0;" onclick="confirmDelete()">YA, PADAM</button><button class="btn-header" style="background:#888; flex:1; height:40px; margin:0;" onclick="document.getElementById('modalDelete').style.display='none'">BATAL</button></div></div></div>
 
-<div id="modalStdDetails" class="modal-overlay"><div class="modal-content" style="max-width: 550px; border-top: 5px solid var(--gov-gold);"><h3 id="detName" style="color:var(--gov-blue); border-bottom: 2px dashed #eee; padding-bottom:10px; margin-bottom:15px; font-size: 18px;"></h3><div style="max-height: 350px; overflow-y: auto;"><table style="width:100%; font-size:12px; text-align:left; border-collapse: collapse;"><tbody id="detBody"></tbody></table></div><div style="text-align:center; margin-top:20px;"><button class="btn-header" style="background:#888; width: 100%; height: 40px; margin:0;" onclick="document.getElementById('modalStdDetails').style.display='none'">TUTUP PENGESAHAN</button></div></div></div>
+<div id="modalStdDetails" class="modal-overlay"><div class="modal-content" style="max-width: 600px; border-top: 5px solid var(--gov-gold);"><h3 id="detName" style="color:var(--gov-blue); border-bottom: 2px dashed #eee; padding-bottom:10px; margin-bottom:15px; font-size: 18px;"></h3><div style="max-height: 350px; overflow-y: auto;"><table style="width:100%; font-size:12px; text-align:left; border-collapse: collapse;"><tbody id="detBody"></tbody></table></div><div style="text-align:center; margin-top:20px;"><button class="btn-header" style="background:#888; width: 100%; height: 40px; margin:0;" onclick="document.getElementById('modalStdDetails').style.display='none'">TUTUP PENGESAHAN</button></div></div></div>
 
 <script>
     const APP_URL = "https://script.google.com/macros/s/AKfycbxzcbMa_qqvbRqWugFerruTXrQhr3QD0H_6BCkSmO_a60ZLVquV1ntyxdI2VIMWPOli/exec"; 
@@ -309,13 +430,70 @@
     const listSemuaKelas =['1A','2A','3A','4A','5A','6A'];
     const standardColors =['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'];
 
+    // Preload Logos dengan Proxy Fallback Dwi-Saluran
+    let memoLogoJata = "";
+    let memoLogoSekolah = "";
+
     window.addEventListener('DOMContentLoaded', () => {
         loadOptions();
+        
+        loadJataNegara();
+        loadSecureImage("https://i.postimg.cc/02NPRHcT/sjkccc_logo.png").then(b => memoLogoSekolah = b);
+
         fetch(APP_URL + "?action=read").then(r=>r.json()).then(d=>{ 
             masterData = d; isDataReady = true; 
+            initStudentFilters(); 
             if(document.getElementById('main-system').style.display === 'block') { renderTables(); updateMgmtStats(); hideLoader(); }
         }).catch(e => console.log(e));
     });
+
+    // Pemuat Logo Jata Negara Dwi-Proxy untuk Mengatasi Isu CORS Pelayar Web
+    async function loadJataNegara() {
+        const urls = [
+            "https://i.postimg.cc/C5dgkqn0/images-(1).png",
+            "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Coat_of_arms_of_Malaysia.svg/512px-Coat_of_arms_of_Malaysia.svg.png"),
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Coat_of_arms_of_Malaysia.svg/512px-Coat_of_arms_of_Malaysia.svg.png"
+        ];
+        for (let u of urls) {
+            let b = await loadSecureImage(u);
+            if (b) { memoLogoJata = b; break; }
+        }
+    }
+
+    async function loadSecureImage(url) {
+        return new Promise((resolve) => {
+            const img = new Image(); img.crossOrigin = 'Anonymous';
+            img.onload = () => { 
+                const canvas = document.createElement('canvas'); 
+                canvas.width = img.width; canvas.height = img.height; 
+                canvas.getContext('2d').drawImage(img, 0, 0); 
+                resolve(canvas.toDataURL('image/png')); 
+            };
+            img.onerror = () => resolve("");
+            img.src = url;
+        });
+    }
+
+    // Inisialisasi Dropdown Multi-Select untuk Perincian Kes
+    function initStudentFilters() {
+        const ul = document.getElementById('sFilterP');
+        ul.innerHTML = '';
+        
+        const uniquePerincian = [...new Set(masterData.map(r => r['Perincian Kes'] || r['Perincian Kesalahan']))].filter(Boolean).sort();
+        
+        uniquePerincian.forEach((p, idx) => {
+            ul.innerHTML += `<li>
+                <input type="checkbox" id="chk_${idx}" value="${p}" onchange="renderStudentSummary()"/>
+                <label for="chk_${idx}">${p}</label>
+            </li>`;
+        });
+
+        const checkList = document.getElementById('multiSelectContainer');
+        const anchor = checkList.querySelector('.anchor');
+        
+        anchor.onclick = function(evt) { checkList.classList.toggle('visible'); };
+        document.addEventListener('click', function(event) { if (!checkList.contains(event.target)) checkList.classList.remove('visible'); });
+    }
 
     function handleLogin() {
         if(document.getElementById('username').value==='SJKCCC' && document.getElementById('password').value==='BBC9401') {
@@ -378,19 +556,20 @@
             kelas:document.getElementById('kelas').value, nama:document.getElementById('nama').value, 
             jenis:document.getElementById('jenis').value, perincian:document.getElementById('perincian').value, 
             tindakan:document.getElementById('tindakan').value, 
-            keterangan:document.getElementById('keterangan').value.toUpperCase(), // TUKAR KE HURUF BESAR SEBELUM SIMPAN
+            keterangan:document.getElementById('keterangan').value.toUpperCase(), 
             guru:document.getElementById('guru').value, images:imgs 
         };
 
         const newRec = { 
             "ID": payload.id, "Tarikh": payload.tarikh, "Kelas": payload.kelas, "Nama Murid": payload.nama, 
             "Kategori Kes": payload.jenis, "Perincian Kes": payload.perincian, "Tindakan": payload.tindakan, 
-            "Keterangan Tambahan / Kronologi Kes": payload.keterangan, // NAMA HEADER BARU
+            "Keterangan Tambahan / Kronologi Kes": payload.keterangan, 
             "Intervensi": "TIADA", "Catatan Intervensi": "", "Guru Merekod": payload.guru, "Gambar Links": "" 
         };
         
         masterData.push(newRec);
         renderTables(); updateMgmtStats(); 
+        initStudentFilters(); 
         if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
         
         document.getElementById('disciplineForm').reset(); 
@@ -420,13 +599,9 @@
         let filtered = masterData.filter(r => {
             const rd = new Date(r.Tarikh);
             let match = true;
-
-            if(currentFilter==='bulan') {
-                if(rd.getMonth() !== now.getMonth() || rd.getFullYear() !== now.getFullYear()) match = false;
-            }
+            if(currentFilter==='bulan') { if(rd.getMonth() !== now.getMonth() || rd.getFullYear() !== now.getFullYear()) match = false; }
             if (selK !== 'semua' && r.Kelas !== selK) match = false;
             if (selG !== 'semua' && r['Guru Merekod'] !== selG) match = false;
-
             return match;
         });
 
@@ -434,7 +609,7 @@
             tb.innerHTML += `<tr>
                 <td class="col-date">${r.Tarikh}</td>
                 <td><strong>${r['Nama Murid']}</strong><br><small>${r.Kelas}</small></td>
-                <td>${r['Kategori Kes']}<br><small>(${r['Perincian Kes']})</small></td>
+                <td>${r['Kategori Kes']}<br><small>(${r['Perincian Kes'] || r['Perincian Kesalahan']})</small></td>
                 <td><span class="status-pill">${r.Tindakan}</span></td>
                 <td>${r.Intervensi}</td>
                 <td class="col-pilihan">
@@ -502,7 +677,7 @@
         const id = document.getElementById('delRecId').value;
         
         masterData = masterData.filter(r => r.ID.toString() !== id.toString()); 
-        renderTables(); updateMgmtStats();
+        renderTables(); updateMgmtStats(); initStudentFilters();
         if(document.getElementById('mgmt-panel').style.display === 'block') applyMgmtFilter();
         if(document.getElementById('student-panel').style.display === 'block') renderStudentSummary();
         
@@ -515,7 +690,7 @@
     function saveIntv() { 
         const id = document.getElementById('intvId').value; 
         const intvVal = `[${document.getElementById('iJ').value} - ${document.getElementById('iT').value}]`; 
-        const catatan = document.getElementById('iC').value.toUpperCase(); // TUKAR KEPADA HURUF BESAR
+        const catatan = document.getElementById('iC').value.toUpperCase(); 
         
         const idx = masterData.findIndex(r => r.ID.toString() === id.toString());
         if(idx !== -1) { masterData[idx].Intervensi = intvVal; masterData[idx]['Catatan Intervensi'] = catatan; }
@@ -546,17 +721,34 @@
         document.getElementById('main-system').style.display = 'block';
     }
 
+    // MAIN STUDENT SUMMARY TABLE RENDER
     function renderStudentSummary() {
         const tbody = document.getElementById('studentSummaryBody'); tbody.innerHTML = '';
         const selKelas = document.getElementById('sFilterK').value; 
         const sDate = document.getElementById('sDateS').value; 
         const eDate = document.getElementById('sDateE').value;
+        
+        const checkedBoxes = document.querySelectorAll('#sFilterP input[type="checkbox"]:checked');
+        const selPerincian = Array.from(checkedBoxes).map(cb => cb.value);
+
+        const anchorLabel = document.querySelector('#multiSelectContainer .anchor');
+        if (selPerincian.length === 0) {
+            anchorLabel.innerText = "-- Pilih Kesalahan --";
+        } else if (selPerincian.length === 1) {
+            anchorLabel.innerText = selPerincian[0];
+        } else {
+            anchorLabel.innerText = `${selPerincian.length} Kesalahan Dipilih`;
+        }
+
         const summary = {};
         
         masterData.forEach(r => {
             if (selKelas !== 'semua' && r.Kelas !== selKelas) return;
             if (sDate && r.Tarikh < sDate) return;
             if (eDate && r.Tarikh > eDate) return;
+            
+            const pKes = r['Perincian Kes'] || r['Perincian Kesalahan'];
+            if (selPerincian.length > 0 && !selPerincian.includes(pKes)) return;
 
             const key = r['Nama Murid'] + "|||" + r.Kelas;
             if(!summary[key]) summary[key] = { nama: r['Nama Murid'], kelas: r.Kelas, count: 0 };
@@ -565,35 +757,166 @@
 
         const sorted = Object.values(summary).sort((a,b) => b.count - a.count);
         if(sorted.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#888;">Tiada rekod data murid untuk tapisan ini.</td></tr>'; return; }
+        
         sorted.forEach(s => {
-            tbody.innerHTML += `<tr><td style="text-align:left; padding-left:30px; font-weight:bold; color:var(--gov-blue);">${s.nama}</td><td>${s.kelas}</td><td><span class="badge-count">${s.count}</span></td><td><button class="btn-emoji" onclick="viewStdDetails('${s.nama}', '${s.kelas}')" title="Lihat Rekod Kesalahan">📋</button><button class="btn-emoji" onclick="genStdPDF('${s.nama}', '${s.kelas}')" title="Muat Turun PDF Individu">🖨️</button></td></tr>`;
+            tbody.innerHTML += `<tr>
+                <td style="text-align:left; padding-left:30px; font-weight:bold; color:var(--gov-blue);">${s.nama}</td>
+                <td>${s.kelas}</td>
+                <td><span class="badge-count">${s.count}</span></td>
+                <td>
+                    <button class="btn-emoji" onclick="viewStdDetails('${s.nama}', '${s.kelas}')" title="Lihat Rekod Kesalahan">📋</button>
+                    <button class="btn-emoji" onclick="genStdPDF('${s.nama}', '${s.kelas}')" title="Muat Turun Laporan Keseluruhan Murid">🖨️</button>
+                    <button class="btn-emoji" onclick="genSummaryMemo('${s.nama}', '${s.kelas}')" title="Jana Memo Disiplin Berdasarkan Tapisan">📝</button>
+                </td>
+            </tr>`;
         });
     }
 
     function viewStdDetails(nama, kelas) {
         document.getElementById('detName').innerText = `Rekod Kesalahan: ${nama} (${kelas})`;
         const tbody = document.getElementById('detBody'); tbody.innerHTML = '';
-        const sDate = document.getElementById('sDateS').value; const eDate = document.getElementById('sDateE').value;
+        const sDate = document.getElementById('sDateS').value; 
+        const eDate = document.getElementById('sDateE').value;
         
+        const checkedBoxes = document.querySelectorAll('#sFilterP input[type="checkbox"]:checked');
+        const selPerincian = Array.from(checkedBoxes).map(cb => cb.value);
+
         const records = masterData.filter(r => {
             if(r['Nama Murid'] !== nama || r.Kelas !== kelas) return false;
             if(sDate && r.Tarikh < sDate) return false;
             if(eDate && r.Tarikh > eDate) return false;
+            const pKes = r['Perincian Kes'] || r['Perincian Kesalahan'];
+            if (selPerincian.length > 0 && !selPerincian.includes(pKes)) return false;
             return true;
         }).reverse();
 
-        records.forEach((r, i) => { tbody.innerHTML += `<tr style="border-bottom:1px dashed #ddd;"><td style="padding:10px 5px; width:30px; font-weight:bold; color:var(--gov-gold);">${i+1}.</td><td style="padding:10px 5px;"><b>${r.Tarikh}</b><br><span style="color:#555;">${r['Kategori Kes']} - ${r['Perincian Kes'] || r['Perincian Kesalahan']}</span></td><td style="padding:10px 5px; color:var(--danger-red); font-weight:500;">${r.Tindakan}</td></tr>`; });
+        records.forEach((r, i) => { 
+            tbody.innerHTML += `<tr style="border-bottom:1px dashed #ddd;">
+                <td style="padding:10px 5px; width:30px; font-weight:bold; color:var(--gov-gold);">${i+1}.</td>
+                <td style="padding:10px 5px;"><b>${r.Tarikh}</b><br><span style="color:#555;">${r['Kategori Kes']} - ${r['Perincian Kes'] || r['Perincian Kesalahan']}</span></td>
+                <td style="padding:10px 5px; color:var(--danger-red); font-weight:500;">${r.Tindakan}</td>
+            </tr>`; 
+        });
         document.getElementById('modalStdDetails').style.display = 'flex';
+    }
+
+    // FUNGSI JANA MEMO UTAMA (EXACT A4 FULL-PAGE & AUTO SAVE TO GOOGLE DRIVE)
+    async function genSummaryMemo(nama, kelas) {
+        showLoader("MENJANA MEMO & SIMPAN KE DRIVE...");
+        const sDate = document.getElementById('sDateS').value; 
+        const eDate = document.getElementById('sDateE').value;
+        const checkedBoxes = document.querySelectorAll('#sFilterP input[type="checkbox"]:checked');
+        const selPerincian = Array.from(checkedBoxes).map(cb => cb.value);
+
+        const records = masterData.filter(r => {
+            if(r['Nama Murid'] !== nama || r.Kelas !== kelas) return false;
+            if(sDate && r.Tarikh < sDate) return false;
+            if(eDate && r.Tarikh > eDate) return false;
+            const pKes = r['Perincian Kes'] || r['Perincian Kesalahan'];
+            if (selPerincian.length > 0 && !selPerincian.includes(pKes)) return false;
+            return true;
+        });
+
+        if (records.length === 0) {
+            hideLoader();
+            alert("Tiada rekod untuk dijana memo berdasarkan tapisan.");
+            return;
+        }
+
+        // Sort records ascending for dates
+        records.sort((a,b) => new Date(a.Tarikh) - new Date(b.Tarikh));
+
+        const allDatesArr = records.map(r => formatDateMY(r.Tarikh));
+        const allDatesStr = allDatesArr.join(', ');
+        
+        const uniqueKesArr = [...new Set(records.map(r => r['Perincian Kes'] || r['Perincian Kesalahan']))];
+        const kesStr = uniqueKesArr.join(', ');
+        
+        const freq = records.length;
+
+        // Populate Template
+        document.getElementById('memo-logo1').src = memoLogoJata;
+        document.getElementById('memo-logo2').src = memoLogoSekolah;
+        
+        document.getElementById('memo-val-name-top').innerText = nama;
+        document.getElementById('memo-val-class-top').innerText = kelas;
+        
+        document.getElementById('memo-val-name').innerText = nama;
+        document.getElementById('memo-val-class').innerText = kelas;
+        document.getElementById('memo-val-kes').innerText = kesStr;
+        document.getElementById('memo-val-dates').innerText = allDatesStr;
+        document.getElementById('memo-val-freq').innerText = `${freq} kali / 次`;
+
+        // Populate names in parent's agreement block
+        document.getElementById('memo-val-name2').innerText = nama;
+        document.getElementById('memo-val-class2').innerText = kelas;
+        document.getElementById('memo-val-name3').innerText = nama;
+        document.getElementById('memo-val-class3').innerText = kelas;
+
+        const memoElement = document.getElementById('memo-print-area');
+
+        try {
+            memoElement.style.zIndex = "-1000";
+            
+            // html2canvas exact 794x1123 render for full A4
+            const canvas = await html2canvas(memoElement, { 
+                scale: 2, 
+                useCORS: true, 
+                backgroundColor: "#ffffff", 
+                scrollY: 0,
+                width: 794,
+                height: 1123
+            });
+            
+            const imgData = canvas.toDataURL('image/jpeg', 1.0);
+
+            // PDF Setup
+            const { jsPDF } = window.jspdf; 
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = 210;
+            const pdfHeight = 297; 
+            
+            doc.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            
+            // Extract Base64 for Google Drive Upload
+            const pdfBase64 = doc.output('datauristring').split(',')[1];
+
+            // AUTO-SAVE TO GOOGLE DRIVE FOLDER (1LeMQM_TWNTsnEZYXMSp0mkZKncdTYbYC)
+            fetch(APP_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "saveMemoPDF",
+                    folderId: "1LeMQM_TWNTsnEZYXMSp0mkZKncdTYbYC",
+                    nama: nama,
+                    kelas: kelas,
+                    pdfBase64: pdfBase64
+                })
+            }).catch(err => console.error("Auto-save memo to Drive failed:", err));
+
+            // Save PDF to user's local device
+            doc.save(`Memo_Disiplin_${nama}.pdf`);
+
+        } catch (error) {
+            console.error("Error generating memo:", error);
+            alert("Ralat semasa menjana memo.");
+        }
+
+        hideLoader();
     }
 
     async function genStdPDF(nama, kelas) {
         showLoader("MENJANA PDF INDIVIDU..."); 
-        const sDate = document.getElementById('sDateS').value; const eDate = document.getElementById('sDateE').value;
+        const sDate = document.getElementById('sDateS').value; 
+        const eDate = document.getElementById('sDateE').value;
+        const checkedBoxes = document.querySelectorAll('#sFilterP input[type="checkbox"]:checked');
+        const selPerincian = Array.from(checkedBoxes).map(cb => cb.value);
         
         const records = masterData.filter(r => {
             if(r['Nama Murid'] !== nama || r.Kelas !== kelas) return false;
             if(sDate && r.Tarikh < sDate) return false;
             if(eDate && r.Tarikh > eDate) return false;
+            const pKes = r['Perincian Kes'] || r['Perincian Kesalahan'];
+            if (selPerincian.length > 0 && !selPerincian.includes(pKes)) return false;
             return true;
         }).reverse();
         
@@ -610,7 +933,8 @@
         if (sDate && eDate) julatText = `${fDot(sDate)} - ${fDot(eDate)}`;
         else if (sDate) julatText = `Bermula ${fDot(sDate)}`;
         else if (eDate) julatText = `Sehingga ${fDot(eDate)}`;
-        doc.text(`Julat Tarikh : ${julatText}`, 15, 63);
+        if (selPerincian.length > 0) julatText += ` | Tapisan Kes: Ya`;
+        doc.text(`Julat Tarikh/Kes : ${julatText}`, 15, 63);
 
         const rows = records.map((r, i) => [i+1, r.Tarikh, r['Kategori Kes'] + "\n(" + (r['Perincian Kes'] || r['Perincian Kesalahan']) + ")", r.Tindakan, r.Intervensi, r['Guru Merekod']]);
         doc.autoTable({ startY: 68, head: [['No.', 'Tarikh', 'Kesalahan', 'Tindakan', 'Intervensi', 'Guru']], body: rows, theme: 'grid', styles: { fontSize: 8 }, headStyles: { fillColor:[15, 38, 88], textColor:[197, 160, 89] } });
@@ -623,16 +947,6 @@
         for (let i = 1; i <= pageCount; i++) { doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text("s.k.  Guru Besar", 15, 280); doc.text("      SJK(C) CHIO CHIAO", 15, 285); }
 
         doc.save(`Laporan_Individu_${nama}.pdf`); hideLoader();
-    }
-
-    async function loadImage(url) {
-        return new Promise((resolve) => {
-            const img = new Image(); img.crossOrigin = 'Anonymous';
-            const driveId = url.split('id=')[1]?.split(',')[0] || url.split('d/')[1]?.split('/')[0];
-            img.src = driveId ? `https://lh3.googleusercontent.com/d/${driveId}=s400` : url;
-            img.onload = () => { const canvas = document.createElement('canvas'); canvas.width = img.width; canvas.height = img.height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0); resolve(canvas.toDataURL('image/jpeg')); };
-            img.onerror = () => resolve(null);
-        });
     }
 
     async function generatePDF(id) {
@@ -669,7 +983,7 @@
         if(imgUrls.length > 0) {
             doc.setFontSize(10); doc.text("BUKTI GAMBAR KESALAHAN:", 20, finalY);
             finalY += 5; let startX = 20;
-            for(let url of imgUrls) { const base64 = await loadImage(url); if(base64) { doc.addImage(base64, 'JPEG', startX, finalY, 40, 30); startX += 45; if(startX > 160) { startX = 20; finalY += 35; } } }
+            for(let url of imgUrls) { const base64 = await loadSecureImage(url); if(base64) { doc.addImage(base64, 'JPEG', startX, finalY, 40, 30); startX += 45; if(startX > 160) { startX = 20; finalY += 35; } } }
             finalY += 40;
         }
         let sigY = finalY > 230 ? (doc.addPage(), 40) : finalY + 15;
