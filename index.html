@@ -88,8 +88,23 @@
         .cute-table td { text-align: center; font-size: 14px; padding: 15px 15px; border-bottom: 1px dashed #eee; vertical-align: middle; background: white;}
         .cute-table tr:last-child td { border-bottom: none; }
         .cute-table tr:hover td { background-color: #f9fbff; }
-        .btn-emoji { background: transparent; border: 2px solid #eee; border-radius: 50%; width: 45px; height: 45px; font-size: 20px; cursor: pointer; transition: 0.2s; margin: 0 5px; display: inline-flex; justify-content: center; align-items: center;}
-        .btn-emoji:hover { border-color: var(--gov-gold); background: #fffcf5; transform: scale(1.1); box-shadow: 0 4px 8px rgba(197, 160, 89, 0.2);}
+        
+        /* DIBESARKAN: BUTANG EMOJI DI HALAMAN REKOD MURID */
+        .btn-emoji { 
+            background: transparent; 
+            border: 2px solid #ccc; 
+            border-radius: 50%; 
+            width: 55px; 
+            height: 55px; 
+            font-size: 26px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            margin: 0 6px; 
+            display: inline-flex; 
+            justify-content: center; 
+            align-items: center;
+        }
+        .btn-emoji:hover { border-color: var(--gov-gold); background: #fffcf5; transform: scale(1.15); box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3);}
         .badge-count { background: var(--gov-blue); color: var(--gov-gold); padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);}
 
         /* MODALS */
@@ -110,9 +125,9 @@
 <!-- HIDDEN HTML TEMPLATE FOR MEMO PDF (Auto One-Page Design) -->
 <div id="memo-print-area" style="position: absolute; left: -9999px; top: 0; width: 794px; height: 1123px; display: block; background: white; padding: 50px 60px; box-sizing: border-box; font-family: Arial, 'Microsoft YaHei', sans-serif; color: #000; line-height: 1.4;">
     
-    <!-- Header Mengikut Format Imej (Nisbah Aspek Logo Dipelihara) -->
+    <!-- Header Mengikut Format Imej (Jata Negara diisi lalai) -->
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px;">
-        <img id="memo-logo1" src="" style="height: 75px; max-width: 100px; object-fit: contain; display: block;">
+        <img id="memo-logo1" src="https://i.postimg.cc/C5dgkqn0/images-(1).png" style="height: 75px; max-width: 100px; object-fit: contain; display: block;" crossorigin="anonymous">
         <div style="text-align: center; flex: 1; padding: 0 10px;">
             <h1 style="font-size: 20px; margin: 0; font-weight: bold; letter-spacing: 1px;">沙叻觉侨国民型华文学校</h1>
             <h2 style="font-size: 13px; margin: 3px 0 6px; font-weight: bold;">SEKOLAH JENIS KEBANGSAAN (CINA) CHIO CHIAO</h2>
@@ -125,22 +140,22 @@
                 </div>
             </div>
         </div>
-        <img id="memo-logo2" src="" style="height: 75px; max-width: 100px; object-fit: contain; display: block;">
+        <img id="memo-logo2" src="https://i.postimg.cc/02NPRHcT/sjkccc_logo.png" style="height: 75px; max-width: 100px; object-fit: contain; display: block;" crossorigin="anonymous">
     </div>
 
-    <!-- Body Content (Font 11px) -->
-    <div style="font-size: 11px;">
+    <!-- Body Content (Font 12px) -->
+    <div style="font-size: 12px;">
         <p style="font-weight: bold; margin-bottom: 2px;">Kepada / 致：</p>
         <p style="margin-top: 0; margin-bottom: 12px;">Ibu Bapa / Penjaga kepada:<br>家长 / 监护人：<br>
-        <strong id="memo-val-name-top" style="font-size:12px;"></strong><br>
+        <strong id="memo-val-name-top" style="font-size:13px;"></strong><br>
         (Kelas: <span id="memo-val-class-top"></span>)</p>
 
         <div style="text-align: center; margin: 10px 0;">
-            <h3 style="font-size: 14px; margin: 0; text-decoration: underline;">MEMO SALAH LAKU KES DISIPLIN</h3>
-            <h3 style="font-size: 14px; margin: 2px 0 0; text-decoration: underline;">纪律事项通知备忘录</h3>
+            <h3 style="font-size: 15px; margin: 0; text-decoration: underline;">MEMO SALAH LAKU KES DISIPLIN</h3>
+            <h3 style="font-size: 15px; margin: 2px 0 0; text-decoration: underline;">纪律事项通知备忘录</h3>
         </div>
 
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px;">
             <tr>
                 <td style="width: 30%; padding: 5px; border: 1px solid #000; font-weight: bold;">Nama Murid / 学生姓名</td>
                 <td style="padding: 5px; border: 1px solid #000;" id="memo-val-name"></td>
@@ -163,31 +178,35 @@
             </tr>
         </table>
 
-        <!-- Pengesahan Murid -->
-        <h4 style="margin: 0 0 2px; font-size: 11px; font-weight: bold;">Pengesahan Murid / 学生确认</h4>
-        <p style="margin: 0 0 2px;">Saya __________________________________________ dengan ini mengesahkan bahawa saya telah menerima dan memahami makluman berkaitan kes disiplin tersebut. Saya akan berusaha sedaya upaya untuk mematuhi peraturan sekolah.</p>
-        <p style="margin: 2px 0 8px;">本人 __________________________________________ 确认已收到并了解有关上述纪律事项的通知。本人将尽力遵守学校规则，并在未来改进自己的行为。</p>
-        
-        <p style="margin: 0 0 2px;">......................................................</p>
-        <p style="margin: 0 0 10px; font-weight: bold;">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
+        <!-- Pengesahan Murid (Line Spacing 1.5) -->
+        <div style="line-height: 1.5; margin-bottom: 12px; font-size: 12px;">
+            <h4 style="margin: 0 0 3px; font-size: 12px; font-weight: bold;">Pengesahan Murid / 学生确认</h4>
+            <p style="margin: 0 0 3px;">Saya __________________________________________ dengan ini mengesahkan bahawa saya telah menerima dan memahami makluman berkaitan kes disiplin tersebut. Saya akan berusaha sedaya upaya untuk mematuhi peraturan sekolah.</p>
+            <p style="margin: 3px 0 10px;">本人 __________________________________________ 确认已收到并了解有关上述纪律事项的通知。本人将尽力遵守学校规则，并在未来改进自己的行为。</p>
+            
+            <p style="margin: 0 0 2px;">......................................................</p>
+            <p style="margin: 0; font-weight: bold;">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
+        </div>
 
         <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;">
 
-        <!-- Pengesahan Ibu Bapa -->
-        <h4 style="margin: 0 0 2px; font-size: 11px; font-weight: bold;">Pengesahan Ibu Bapa / Waris</h4>
-        <h4 style="margin: 0 0 2px; font-size: 11px; font-weight: bold;">家长 / 监护人确认</h4>
-        
-        <p style="margin: 4px 0 2px;">Saya ___________________________________________ dengan ini mengesahkan bahawa saya telah menerima makluman berkaitan kes disiplin anak saya <strong id="memo-val-name2"></strong>, Tahun <strong id="memo-val-class2"></strong> dan akan memberikan perhatian serta mengambil tindakan yang sewajarnya.</p>
+        <!-- Pengesahan Ibu Bapa (Line Spacing 1.5) -->
+        <div style="line-height: 1.5; margin-bottom: 12px; font-size: 12px;">
+            <h4 style="margin: 0 0 2px; font-size: 12px; font-weight: bold;">Pengesahan Ibu Bapa / Waris</h4>
+            <h4 style="margin: 0 0 2px; font-size: 12px; font-weight: bold;">家长 / 监护人确认</h4>
+            
+            <p style="margin: 4px 0 2px;">Saya ___________________________________________ dengan ini mengesahkan bahawa saya telah menerima makluman berkaitan kes disiplin anak saya <strong id="memo-val-name2"></strong>, Tahun <strong id="memo-val-class2"></strong> dan akan memberikan perhatian serta mengambil tindakan yang sewajarnya.</p>
 
-        <p style="margin: 4px 0 10px;">本人 ___________________________________________ 确认已收到有关孩子 <strong id="memo-val-name3"></strong>（年级：<strong id="memo-val-class3"></strong>）纪律事项的通知，并将给予关注及采取适当的跟进措施。</p>
+            <p style="margin: 4px 0 10px;">本人 ___________________________________________ 确认已收到有关孩子 <strong id="memo-val-name3"></strong>（年级：<strong id="memo-val-class3"></strong>）纪律事项的通知，并将给予关注及采取适当的跟进措施。</p>
 
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px;">
-            <div>
-                <p style="margin: 0 0 2px;">......................................................</p>
-                <p style="margin: 0; font-weight: bold;">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
-            </div>
-            <div>
-                <p style="margin: 0; font-weight: bold;">Tarikh / 日期：_________________</p>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                    <p style="margin: 0 0 2px;">......................................................</p>
+                    <p style="margin: 0; font-weight: bold;">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
+                </div>
+                <div>
+                    <p style="margin: 0; font-weight: bold;">Tarikh / 日期：_________________</p>
+                </div>
             </div>
         </div>
     </div>
@@ -197,21 +216,21 @@
         <hr style="border: 0; border-top: 1px solid #ccc; margin-bottom: 12px;">
         
         <!-- Nota -->
-        <h4 style="margin: 0 0 2px; font-size: 11px; font-weight: bold;">Nota / 备注</h4>
-        <p style="margin: 0 0 2px; font-style: italic; font-size: 10px;">*Memo ini WAJIB dikembalikan kepada pihak sekolah dalam tempoh selewat-lewatnya 3 hari daripada tarikh surat diberikan.</p>
-        <p style="margin: 0 0 15px; font-style: italic; font-size: 10px;">*此备忘录必须在发出日期起最迟3天内交回学校。</p>
+        <h4 style="margin: 0 0 2px; font-size: 12px; font-weight: bold;">Nota / 备注</h4>
+        <p style="margin: 0 0 2px; font-style: italic; font-size: 11px;">*Memo ini WAJIB dikembalikan kepada pihak sekolah dalam tempoh selewat-lewatnya 3 hari daripada tarikh surat diberikan.</p>
+        <p style="margin: 0 0 15px; font-style: italic; font-size: 11px;">*此备忘录必须在发出日期起最迟3天内交回学校。</p>
 
         <!-- GPK HEM Signature -->
         <div style="margin-bottom: 15px;">
-            <p style="margin: 0; font-size: 11px;">Yang menjalankan amanah,</p>
+            <p style="margin: 0; font-size: 12px;">Yang menjalankan amanah,</p>
             <br><br>
-            <p style="margin: 0; font-size: 11px;">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
-            <p style="margin: 0; font-weight: bold; font-size: 11px;">GPK Hal Ehwal Murid</p>
-            <p style="margin: 0; font-size: 11px;">SJK(C) CHIO CHIAO</p>
+            <p style="margin: 0; font-size: 12px;">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
+            <p style="margin: 0; font-weight: bold; font-size: 12px;">GPK Hal Ehwal Murid</p>
+            <p style="margin: 0; font-size: 12px;">SJK(C) CHIO CHIAO</p>
         </div>
 
         <!-- SK -->
-        <p style="margin: 0; font-size: 10px; font-weight: bold;">s.k: Guru Besar SJK(C) CHIO CHIAO</p>
+        <p style="margin: 0; font-size: 11px; font-weight: bold;">s.k: Guru Besar SJK(C) CHIO CHIAO</p>
     </div>
 </div>
 
@@ -447,7 +466,7 @@
         }).catch(e => console.log(e));
     });
 
-    // Pemuat Logo Jata Negara Dwi-Proxy untuk Mengatasi Isu CORS Pelayar Web
+    // Pemuat Logo Jata Negara Dwi-Proxy
     async function loadJataNegara() {
         const urls = [
             "https://i.postimg.cc/C5dgkqn0/images-(1).png",
@@ -834,9 +853,13 @@
         
         const freq = records.length;
 
-        // Populate Template
-        document.getElementById('memo-logo1').src = memoLogoJata;
-        document.getElementById('memo-logo2').src = memoLogoSekolah;
+        // Ensure Jata Logo Safety
+        if (memoLogoJata) {
+            document.getElementById('memo-logo1').src = memoLogoJata;
+        }
+        if (memoLogoSekolah) {
+            document.getElementById('memo-logo2').src = memoLogoSekolah;
+        }
         
         document.getElementById('memo-val-name-top').innerText = nama;
         document.getElementById('memo-val-class-top').innerText = kelas;
