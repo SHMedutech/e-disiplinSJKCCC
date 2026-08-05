@@ -125,9 +125,9 @@
 <!-- HIDDEN HTML TEMPLATE FOR MEMO PDF (Auto One-Page Design) -->
 <div id="memo-print-area" style="position: absolute; left: -9999px; top: 0; width: 794px; height: 1123px; display: block; background: white; padding: 50px 60px; box-sizing: border-box; font-family: Arial, 'Microsoft YaHei', sans-serif; color: #000; line-height: 1.4;">
     
-    <!-- Header Mengikut Format Imej (Jata Negara diisi lalai) -->
+    <!-- Header Mengikut Format Imej (Logo tidak di-resize/compress) -->
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px;">
-        <img id="memo-logo1" src="https://i.postimg.cc/C5dgkqn0/images-(1).png" style="height: 75px; max-width: 100px; object-fit: contain; display: block;" crossorigin="anonymous">
+        <img id="memo-logo1" src="https://i.postimg.cc/C5dgkqn0/images-(1).png" style="height: 80px; width: auto; display: block;" crossorigin="anonymous">
         <div style="text-align: center; flex: 1; padding: 0 10px;">
             <h1 style="font-size: 20px; margin: 0; font-weight: bold; letter-spacing: 1px;">沙叻觉侨国民型华文学校</h1>
             <h2 style="font-size: 13px; margin: 3px 0 6px; font-weight: bold;">SEKOLAH JENIS KEBANGSAAN (CINA) CHIO CHIAO</h2>
@@ -140,7 +140,7 @@
                 </div>
             </div>
         </div>
-        <img id="memo-logo2" src="https://i.postimg.cc/02NPRHcT/sjkccc_logo.png" style="height: 75px; max-width: 100px; object-fit: contain; display: block;" crossorigin="anonymous">
+        <img id="memo-logo2" src="https://i.postimg.cc/02NPRHcT/sjkccc_logo.png" style="height: 80px; width: auto; display: block;" crossorigin="anonymous">
     </div>
 
     <!-- Body Content (Font 12px) -->
@@ -192,7 +192,7 @@
 
         <!-- Pengesahan Ibu Bapa (Line Spacing 1.5) -->
         <div style="line-height: 1.5; margin-bottom: 12px; font-size: 12px;">
-            <h4 style="margin: 0 0 2px; font-size: 12px; font-weight: bold;">Pengesahan Ibu Bapa / Waris</h4>
+            <h4 style="margin: 0 0 2px; font-size: 12px; font-weight: bold;">Pengesahan Ibu Bapa/ Penjaga</h4>
             <h4 style="margin: 0 0 2px; font-size: 12px; font-weight: bold;">家长 / 监护人确认</h4>
             
             <p style="margin: 4px 0 2px;">Saya ___________________________________________ dengan ini mengesahkan bahawa saya telah menerima makluman berkaitan kes disiplin anak saya <strong id="memo-val-name2"></strong>, Tahun <strong id="memo-val-class2"></strong> dan akan memberikan perhatian serta mengambil tindakan yang sewajarnya.</p>
@@ -853,7 +853,7 @@
         
         const freq = records.length;
 
-        // Ensure Jata Logo Safety
+        // Populate Template secara selamat
         if (memoLogoJata) {
             document.getElementById('memo-logo1').src = memoLogoJata;
         }
